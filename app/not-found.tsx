@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 import NavLink from 'next/link'
 
 export const metadata: Metadata = {
-  title: "Codepen v2 | Page not found",
+  title: "codepen v2 | Page not found",
   description: "Test HTML, CSS and JS code with live preview.",
 };
 
