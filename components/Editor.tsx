@@ -25,30 +25,36 @@ export default function Editor() {
   };
 
   return (
-    <div>
-      <div>
-        <textarea
-          value={htmlCode}
-          onChange={handleHtmlChange}
-          placeholder="HTML"
-        />
-      </div>
-      <div>
-        <textarea
-          value={cssCode}
-          onChange={handleCssChange}
-          placeholder="CSS"
-        />
-      </div>
-      <div>
-        <textarea
-          value={jsCode}
-          onChange={handleJsChange}
-          placeholder="JavaScript"
-        />
+    <div className="flex flex-col justify-center gap-8 items-center">
+      <div className="flex flex-row justify-center gap-8 items-center">
+        <div>
+          <textarea
+            className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white"
+            value={htmlCode}
+            onChange={handleHtmlChange}
+            placeholder="HTML"
+          />
+        </div>
+        <div>
+          <textarea
+            className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white"
+            value={cssCode}
+            onChange={handleCssChange}
+            placeholder="CSS"
+          />
+        </div>
+        <div>
+          <textarea
+            className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white"
+            value={jsCode}
+            onChange={handleJsChange}
+            placeholder="JavaScript"
+          />
+        </div>
       </div>
       <div>
         <iframe
+          className="w-screen min-h-[50vh]"
           aria-label="Code preview"
           srcDoc={`<html><style>${cssCode}</style><body>${htmlCode}<script>${jsCode}</script></body></html>`}
         />
