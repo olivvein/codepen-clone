@@ -19,7 +19,7 @@ function Navbar() {
                 width={96}
                 height={96}
               />
-              <div className="blue_gradient text relative text-[1rem] font-extrabold leading-relaxed">
+              <div className="antialiased opacity-75 text relative text-[1rem] font-extrabold leading-relaxed">
                 codepen v2
               </div>
             </div>

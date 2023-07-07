@@ -20,15 +20,13 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className + "min-h-screen transition-colors"}>
         <Providers>
-          <div className="main antialiased dark:bg-slate-900">
-            <div className="gradient " />
+          <div className="main antialiased dark:bg-gray-900/25">
           </div>
 
           <Navbar />
           <main className="app">{children}</main>
         </Providers>
-        {/* Allow more height for mobile menu on mobile */}
-        <div className="h-40 md:hidden" />
+        
       </body>
     </html>
   );

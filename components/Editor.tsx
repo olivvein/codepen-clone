@@ -1,4 +1,5 @@
 "use client";
+
 import { SetStateAction, useState } from "react";
 
 export default function Editor() {
@@ -54,7 +55,7 @@ export default function Editor() {
       </div>
       <div>
         <iframe
-          className="w-screen min-h-[50vh]"
+          className="w-screen min-h-[50vh] fixed bottom-0 left-0 max-md:mb-10"
           aria-label="Code preview"
           srcDoc={`<html><style>${cssCode}</style><body>${htmlCode}<script>${jsCode}</script></body></html>`}
         />
