@@ -28,7 +28,7 @@ export default function Editor() {
 
   return (
     <div className="w-full">
-      <Space.ViewPort className="w-full fixed z-[-1] mt-16">
+      <Space.ViewPort top={"12%"} className="w-full">
         <Space.Fill trackSize={true}>
           <Space.LeftResizable
             size="33%"
