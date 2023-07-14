@@ -1,4 +1,3 @@
-import Navbar from "@/components/Navbar";
 import Providers from "@/components/Providers";
 import "@styles/globals.css";
 import type { Metadata } from "next";
@@ -20,13 +19,10 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className + "min-h-screen transition-colors"}>
         <Providers>
-          <div className="main antialiased dark:bg-gray-900/25">
-          </div>
+          <div className="main antialiased dark:bg-gray-900/25 "></div>
 
-          <Navbar />
           <main className="app">{children}</main>
         </Providers>
-        
       </body>
     </html>
   );

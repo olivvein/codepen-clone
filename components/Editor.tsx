@@ -4,9 +4,52 @@ import { SetStateAction, useState } from "react";
 import * as Space from "react-spaces";
 
 export default function Editor() {
-  const [htmlCode, setHtmlCode] = useState("");
-  const [cssCode, setCssCode] = useState("body{background-color:black;}");
-  const [jsCode, setJsCode] = useState("");
+  const [htmlCode, setHtmlCode] = useState(`<body>
+      <h1>Start Coding...✨</h1>
+      <button id="darkModeToggle">Toggle Dark Mode</button>
+</body>`);
+  const [cssCode, setCssCode] = useState(`body {
+  font-family: Arial, sans-serif;
+  background-color: #fff;
+  color: #222;
+  transition: background-color 0.3s, color 0.3s;
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+body.dark-mode {
+  background-color: #111;
+  color: #fff;
+}
+
+h1 {
+  font-size: 1.5rem;
+}
+
+button {
+  background-color: #f5f5f5;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+}
+
+button.dark-mode {
+  background-color: #333;
+  color: #fff;
+}
+
+`);
+  const [jsCode, setJsCode] =
+    useState(`const darkModeToggle = document.getElementById('darkModeToggle');
+const body = document.body;
+
+darkModeToggle.addEventListener('click', () => {
+  body.classList.toggle('dark-mode');
+});
+`);
 
   const handleHtmlChange = (event: {
     target: { value: SetStateAction<string> };
