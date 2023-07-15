@@ -52,7 +52,7 @@ module.exports = {
         "cp-color-9": "#5A5F73",
         "cp-color-10": "#248C46",
         "cp-color-11": "#47CF73",
-        "cp-color-12": "var(--cp-color-12)",
+        "cp-color-12": "#1E1F26",
         "cp-color-13": "var(--cp-color-13)",
         "cp-color-14": "var(--cp-color-14)",
         "cp-color-15": "var(--cp-color-15)",
