@@ -3,7 +3,7 @@ import React from "react";
 const Footer = () => {
   return (
     <footer
-      className="flex flex-col justify-start items-start text-sm  w-full overflow-hidden sm:py-8 py-16"
+      className="flex flex-col justify-start items-start text-sm h-full w-full overflow-hidden sm:py-8 py-16"
       id="link-footer"
     >
       <div className="bg-cp-color-4 absolute h-full w-screen max-w-full left-[0] -mt-4 -z-[1]"></div>
