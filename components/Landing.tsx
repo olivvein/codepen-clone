@@ -5,7 +5,7 @@ type Props = {};
 
 export default function Landing({}: Props) {
   return (
-    <header className="flex flex-col min-h-screen w-[80%] ">
+    <header className="flex flex-col min-h-screen mt-4 sm:mt-12 w-[80%] ">
       <div className="bg-cp-color-3 w-screen min-h-screen h-max z-[-10] top-0 fixed"></div>
 
       <img

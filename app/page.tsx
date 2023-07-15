@@ -1,6 +1,7 @@
 import Footer from "@/components/Footer";
 import HomeNav from "@/components/HomeNav";
 import Landing from "@/components/Landing";
+import LandingCards from "@/components/LandingCards";
 
 export default function Home() {
   return (
@@ -8,6 +9,7 @@ export default function Home() {
       <div className="bg-cp-color-3 w-screen min-h-screen h-max z-[-10] top-0 fixed"></div>
       <HomeNav />
       <Landing/>
+      <LandingCards/>
       <Footer />
     </div>
   );
