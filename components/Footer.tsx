@@ -3,21 +3,21 @@ import React from "react";
 const Footer = () => {
   return (
     <footer
-      className="flex flex-col justify-start items-start text-sm  w-full overflow-hidden py-8"
+      className="flex flex-col justify-start items-start text-sm  w-full overflow-hidden sm:py-8 py-16"
       id="link-footer"
     >
       <div className="bg-cp-color-4 absolute h-full w-screen max-w-full left-[0] -mt-4 -z-[1]"></div>
 
       <div
-        className="flex gap-4 sm:flex-row flex-col w-full sm:justify-between justify-start"
+        className="flex sm:gap-4 gap-8 sm:flex-row flex-col w-full sm:justify-between justify-start"
         id="link-footer-width-wrapper"
       >
-        <div className="flex flex-col sm:items-start gap-2">
-          <div className="flex sm:flex-col sm:items-start sm:w-auto w-[80vw] flex-row gap-2 ">
+        <div className="flex flex-col sm:items-start sm:gap-2 gap-8">
+          <div className="flex sm:flex-col sm:items-start sm:w-auto w-[80vw] flex-row sm:gap-2 gap-1 ">
             <nav
               id="link-footer-codepen-links"
               aria-label="Links about CodePen"
-              className="sm:flex-row flex gap-2 w-[50%] flex-col"
+              className="sm:flex-row flex sm:gap-2 gap-0 w-[50%] flex-col"
             >
               <h4 className="text-white pr-2">CodePen</h4>
               <a href="/about/" className="hover:text-white text-cp-color-5">
@@ -53,7 +53,7 @@ const Footer = () => {
             </nav>
             <nav
               id="link-footer-for-links"
-              className="sm:flex-row flex gap-2  flex-col"
+              className="sm:flex-row flex sm:gap-2 gap-0 flex-col"
               aria-label="CodePen for different uses"
             >
               <h4 className="text-white pr-2">For</h4>
@@ -89,10 +89,10 @@ const Footer = () => {
               </a>
             </nav>
           </div>
-          <div className="flex sm:flex-col flex-row gap-2 sm:items-start sm:w-auto w-[80vw] ">
+          <div className="flex sm:flex-col flex-row sm:gap-2 gap-1 sm:items-start sm:w-auto w-[80vw] ">
             <nav
               id="link-footer-social-links"
-              className="sm:flex-row flex gap-2  w-[50%] flex-col"
+              className="sm:flex-row flex sm:gap-2 gap-0  w-[50%] flex-col"
               aria-label="CodePen on Social Media"
             >
               <h4 className="text-white pr-2">Social</h4>
@@ -123,7 +123,7 @@ const Footer = () => {
             </nav>
             <nav
               id="link-footer-community-links"
-              className="sm:flex-row flex gap-2  flex-col"
+              className="sm:flex-row flex sm:gap-2 gap-0 flex-col"
               aria-label="CodePen Community"
             >
               <h4 className="text-white pr-2">Community</h4>
