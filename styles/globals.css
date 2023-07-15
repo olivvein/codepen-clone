@@ -118,42 +118,65 @@
   max-width: 100%;
 }
 
+.SidebarCreate-module_anonButton-5yd5b {
+  margin: 0 auto;
+  width: 8rem;
+  height: 4rem;
+  text-align: center;
+  position: relative;
+  border-radius: 6px;
+  box-sizing: border-box;
+  color: var(--cp-color-1);
+  display: block;
+  z-index: 2;
+  overflow: hidden;
+  padding: 3px
+}
+
+.SidebarCreate-module_anonButton-5yd5b:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 200%;
+  height: 100%;
+  background: linear-gradient(115deg, #4fcf70, #fad648, #a767e5, #12bcfe, #44ce7b);
+  background-size: 50% 100%
+}
+
+.SidebarCreate-module_anonButton-5yd5b span {
+  position: relative;
+  z-index: 2;
+  padding: .875rem 0;
+  font-size: 1.1rem;
+  align-items: center;
+  background: #000;
+  border-radius: 3px;
+  display: block;
+  justify-content: center;
+  box-sizing: border-box;
+  height: 100%
+}
+
+.SidebarCreate-module_anonButton-5yd5b:focus:before,
+.SidebarCreate-module_anonButton-5yd5b:hover:before {
+  animation: SidebarCreate-module_rainbowSlide-feOE0 .75s linear infinite
+}
+
+@keyframes SidebarCreate-module_rainbowSlide-feOE0 {
+  to {
+    transform: translateX(-50%)
+  }
+}
+
 /* Tailwind Styles */
 
-.screen-reader-text{
-@apply hidden;
+.screen-reader-text {
+  @apply hidden;
 }
 
 .app {
-  @apply relative z-10 flex justify-center items-center flex-col ;
-}
-
-.black_btn {
-  @apply rounded-full border border-black dark:border-white dark:bg-slate-600 bg-black py-1.5 px-5 text-white transition-all dark:text-black hover:bg-white hover:text-black dark:hover:bg-black dark:hover:text-white text-center text-sm font-inter flex items-center justify-center;
-}
-
-.outline_btn {
-  @apply rounded-full border border-black dark:border-white bg-transparent py-1.5 px-5 text-black dark:text-white transition-all dark:hover:bg-white hover:bg-black hover:text-white dark:hover:text-black text-center text-sm font-inter flex items-center justify-center;
-}
-
-.head_text {
-  @apply mt-5 text-5xl font-extrabold leading-[1.15] text-black dark:text-white sm:text-6xl;
-}
-
-.orange_gradient {
-  @apply bg-gradient-to-r from-amber-500 via-orange-600 to-yellow-500 bg-clip-text text-transparent;
-}
-
-.green_gradient {
-  @apply bg-gradient-to-r from-green-400 to-green-500 bg-clip-text text-transparent;
-}
-
-.blue_gradient {
-  @apply bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent;
-}
-
-.desc {
-  @apply mt-5 text-lg text-gray-600 sm:text-xl max-w-2xl;
+  @apply relative z-10 flex justify-center items-center flex-col;
 }
 
 .flex-center {
