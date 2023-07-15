@@ -6,7 +6,7 @@ const Footer = () => {
       className="flex flex-col justify-start items-start text-sm h-full w-full overflow-hidden sm:py-8 py-16"
       id="link-footer"
     >
-      <div className="bg-cp-color-4 absolute h-full w-screen max-w-full left-[0] -mt-4 -z-[1]"></div>
+      <div className="bg-cp-color-4 absolute h-full w-screen max-w-full left-[0] -mt-16 sm:-mt-8 -z-[1]"></div>
 
       <div
         className="flex sm:gap-4 gap-8 sm:flex-row flex-col w-full sm:justify-between justify-start"
