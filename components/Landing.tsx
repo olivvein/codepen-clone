@@ -28,7 +28,7 @@ export default function Landing({}: Props) {
       <div className="flex sm:flex-row flex-col  gap-8">
         <img
           src="https://cpwebassets.codepen.io/assets/packs/illu-editor-24091b7edc92fba11a2595fe767e6c2b.png"
-          className="max-w-full sm:w-[40vw]"
+          className="max-w-full sm:w-[40vw] h-max aspect-auto"
           alt="code image"
         />
         <div className="flex flex-col text-white fill-white justify-center items-center sm:order-first">
