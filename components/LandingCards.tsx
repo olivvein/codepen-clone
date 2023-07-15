@@ -11,7 +11,7 @@ export default function LandingCards({}: Props) {
         alt=""
         className="-z-[2] absolute top-[200vh] w-[500px] max-w-lg overflow-hidden sm:left-0 "
       />
-      <div className="flex flex-col lg:grid lg:grid-cols-3 gap-8 text-white px-12">
+      <div className="flex flex-col lg:grid lg:grid-cols-3 gap-8 text-white px-4 lg:px-12">
         <div className="flex flex-col justify-start items-start p-4 gap-4 bg-cp-color-6 rounded-lg mx-8">
           <div className="bg-cp-color-3 rounded-lg h-20 w-20 p-4 relative mb-4 sm:mt-[-40px] mt-[-60px]">
             <img

@@ -45,7 +45,7 @@ export default function HomeNav({}: Props) {
       <a
         data-test-id="signup-button"
         href="/accounts/signup/user/free"
-        className="scale-[70%] sm:scale-100 bg-cp-color-11 hover:bg-cp-color-10 text-black hover:text-white text-sm p-4 py-2 px-4 rounded mr-2 mb-1 flex flex-col items-center justify-center"
+        className="scale-[70%] sm:scale-100 aspect-auto bg-cp-color-11 hover:bg-cp-color-10 text-black hover:text-white text-sm p-4 py-2 px-4 rounded mr-2 mb-1 flex flex-col items-center justify-center"
         data-color="green"
       >
         Sign Up
