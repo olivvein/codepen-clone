@@ -3,17 +3,15 @@ import React from "react";
 const Footer = () => {
   return (
     <footer
-      className="flex flex-col justify-start items-start text-sm h-full w-full overflow-hidden sm:py-8 py-16"
+      className="flex flex-col bg-cp-color-4 justify-start items-start text-sm h-full w-screen px-8 sm:px-[10%] overflow-hidden sm:py-8 py-16"
       id="link-footer"
     >
-      <div className="bg-cp-color-4 absolute h-full w-screen max-w-full left-[0] -mt-16 sm:-mt-8 -z-[1]"></div>
-
       <div
-        className="flex sm:gap-4 gap-8 sm:flex-row flex-col w-full sm:justify-between justify-start"
+        className="flex sm:gap-4 gap-8 md:flex-row flex-col w-full sm:justify-between justify-start"
         id="link-footer-width-wrapper"
       >
         <div className="flex flex-col sm:items-start sm:gap-2 gap-8">
-          <div className="flex sm:flex-col sm:items-start sm:w-auto w-[80vw] flex-row sm:gap-2 gap-1 ">
+          <div className="flex sm:flex-col sm:items-start sm:w-auto w-full flex-row sm:gap-2 gap-1 ">
             <nav
               id="link-footer-codepen-links"
               aria-label="Links about CodePen"
@@ -89,7 +87,7 @@ const Footer = () => {
               </a>
             </nav>
           </div>
-          <div className="flex sm:flex-col flex-row sm:gap-2 gap-1 sm:items-start sm:w-auto w-[80vw] ">
+          <div className="flex sm:flex-col flex-row sm:gap-2 gap-1 sm:items-start sm:w-auto w-full ">
             <nav
               id="link-footer-social-links"
               className="sm:flex-row flex sm:gap-2 gap-0  w-[50%] flex-col"
