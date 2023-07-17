@@ -6,9 +6,9 @@ type Props = {};
 export default function LandingCards({}: Props) {
   return (
     <div className="flex flex-col w-full min-h-max pb-12">
-      <div className="flex flex-col lg:grid lg:grid-cols-3 gap-8 text-white px-4 lg:px-12">
-        <div className="flex flex-col justify-start items-start p-4 gap-4 bg-cp-color-6 rounded-lg mx-8">
-          <div className="bg-cp-color-3 rounded-lg h-20 w-20 p-4 relative mb-4 sm:mt-[-40px] mt-[-60px]">
+      <div className="flex flex-col lg:grid lg:grid-cols-3 gap-12 lg:gap-x-[1px] text-white px-4 lg:px-16">
+        <div className="flex flex-col justify-start items-start p-6 gap-4 bg-cp-color-6 rounded-lg mx-8">
+          <div className="bg-cp-color-3 rounded-lg h-20 w-20 p-4 relative mb-4 mt-[-60px]">
             <img
               src="https://cpwebassets.codepen.io/assets/packs/icon-build-0f21c66ed03bfb36c597636d27ca621e.svg"
               alt="Icon of conveyer belt with boxes on it."
@@ -37,13 +37,13 @@ export default function LandingCards({}: Props) {
           </p>
           <a
             href="/pen/"
-            className=" bg-cp-color-12 hover:bg-cp-color-13 text-white text-sm p-4 py-2 px-4 rounded mr-2 mb-1 flex flex-col items-center justify-center"
+            className=" bg-cp-color-13 hover:bg-cp-color-9 text-white text-sm p-4 py-4 px-4 rounded mr-2 mb-1 flex flex-col items-center justify-center"
           >
             <span>Try the Editor</span>
           </a>
         </div>
-        <div className="flex flex-col justify-start items-start p-4 gap-4 bg-cp-color-6 rounded-lg mx-8">
-          <div className="bg-cp-color-3 rounded-lg h-20 w-20 p-4 relative mb-4 sm:mt-[-40px] mt-[-60px]">
+        <div className="flex flex-col justify-start items-start p-6 gap-4 bg-cp-color-6 rounded-lg mx-8">
+          <div className="bg-cp-color-3 rounded-lg h-20 w-20 p-4 relative mb-4 mt-[-60px]">
             <img
               src="https://cpwebassets.codepen.io/assets/packs/icon-learn-b1311620e99cea826f259aa2f7750940.svg"
               alt="Icon of Map"
@@ -60,13 +60,13 @@ export default function LandingCards({}: Props) {
           </p>
           <a
             href="/challenges/"
-            className=" bg-cp-color-12 hover:bg-cp-color-13 text-white text-sm p-4 py-2 px-4 rounded mr-2 mb-1 flex flex-col items-center justify-center"
+            className=" bg-cp-color-13 hover:bg-cp-color-9 text-white text-sm p-4 py-4 px-4 rounded mr-2 mb-1 flex flex-col items-center justify-center"
           >
             <span>Join this Week’s Challenge</span>
           </a>
         </div>
-        <div className="flex flex-col justify-start items-start p-4 gap-4 bg-cp-color-6 rounded-lg mx-8">
-          <div className="bg-cp-color-3 rounded-lg h-20 w-20 p-4 relative mb-4 sm:mt-[-40px] mt-[-60px]">
+        <div className="flex flex-col justify-start items-start p-6 gap-4 bg-cp-color-6 rounded-lg mx-8">
+          <div className="bg-cp-color-3 rounded-lg h-20 w-20 p-4 relative mb-4  mt-[-60px]">
             <img
               src="https://cpwebassets.codepen.io/assets/packs/icon-share-910c683bbac21bf41fcf9aab64ebc957.svg"
               alt="Icon of Globe"
@@ -87,17 +87,17 @@ export default function LandingCards({}: Props) {
           </p>
           <a
             href="#trending"
-            className=" bg-cp-color-12 hover:bg-cp-color-13 text-white text-sm p-4 py-2 px-4 rounded mr-2 mb-1 flex flex-col items-center justify-center"
+            className=" bg-cp-color-13 hover:bg-cp-color-9 text-white text-sm p-4 py-4 px-4 rounded mr-2 mb-1 flex flex-col items-center justify-center"
           >
             <span>Explore Trending</span>
           </a>
         </div>
       </div>
-      <div className="overflow-hidden w-screen h-max -z-[2] relative flex">
+      <div className="overflow-x-hidden overflow-y-auto w-screen h-max -z-[2] relative flex">
         <img
           src="https://cpwebassets.codepen.io/assets/packs/lines-4-4ea88270d73b7f6eaaa69e91aed97ddf.svg"
           alt=""
-          className="w-[500px] sm:translate-x-0 -translate-x-36"
+          className="w-[600px] sm:-translate-x-16 -translate-x-36"
         />
       </div>
     </div>
