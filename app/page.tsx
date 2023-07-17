@@ -2,6 +2,7 @@ import Footer from "@/components/Footer";
 import HomeNav from "@/components/HomeNav";
 import Landing from "@/components/Landing";
 import LandingCards from "@/components/LandingCards";
+import StartTeam from "@/components/StartTeam";
 
 export default function Home() {
   return (
@@ -10,6 +11,7 @@ export default function Home() {
       <HomeNav />
       <Landing/>
       <LandingCards/>
+      <StartTeam/>
       <Footer />
     </div>
   );
