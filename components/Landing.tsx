@@ -5,14 +5,14 @@ type Props = {};
 
 export default function Landing({}: Props) {
   return (
-    <header className="flex flex-col min-h-screen mt-4 sm:mt-12 w-[80%] ">
-      <div className="bg-cp-color-3 w-screen min-h-screen h-max z-[-10] top-0 fixed"></div>
-
-      <img
-        src="https://cpwebassets.codepen.io/assets/packs/lines-2-4e66616a5ef291c3566a7ddfe1ffaaa8.svg"
-        alt=""
-        className="-z-[2] absolute top-[100vh] w-[500px] max-w-lg overflow-hidden sm:right-0 "
-      />
+    <header className="flex flex-col min-h-[100dvh] pb-16 mt-4 sm:mt-12 w-[80%] ">
+      <div className="overflow-hidden w-[100dvw] h-max -z-[2] flex flex-end absolute right-0 top-[100dvh] ">
+        <img
+          src="https://cpwebassets.codepen.io/assets/packs/lines-2-4e66616a5ef291c3566a7ddfe1ffaaa8.svg"
+          alt=""
+          className=" w-[500px] sm:translate-x-0 translate-x-36"
+        />
+      </div>
       <svg
         viewBox="0 0 138 26"
         fill="none"
@@ -25,7 +25,7 @@ export default function Landing({}: Props) {
         <path d="M15 8a7 7 0 1 0 0 10m7-8.7L33 2l11 7.3v7.4L33 24l-11-7.3zm0 0 11 7.4 11-7.4m0 7.4L33 9.3l-11 7.4M33 2v7.3m0 7.4V24M52 6h5a7 7 0 0 1 0 14h-5zm28 0h-9v14h9m-9-7h6m11 1h6a4 4 0 0 0 0-8h-6v14m26-14h-9v14h9m-9-7h6m11 7V6l11 14V6"></path>
       </svg>
 
-      <div className="flex sm:flex-row flex-col  gap-8">
+      <div className="flex lg:flex-row flex-col  gap-8">
         <img
           src="https://cpwebassets.codepen.io/assets/packs/illu-editor-24091b7edc92fba11a2595fe767e6c2b.png"
           className="max-w-full sm:w-[40vw] h-max aspect-auto"

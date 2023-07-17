@@ -5,12 +5,7 @@ type Props = {};
 
 export default function LandingCards({}: Props) {
   return (
-    <div className="flex flex-col w-full min-h-screen pb-12">
-      <img
-        src="https://cpwebassets.codepen.io/assets/packs/lines-4-4ea88270d73b7f6eaaa69e91aed97ddf.svg"
-        alt=""
-        className="-z-[2] absolute top-[200vh] w-[500px] max-w-lg overflow-hidden sm:left-0 "
-      />
+    <div className="flex flex-col w-full min-h-max pb-12">
       <div className="flex flex-col lg:grid lg:grid-cols-3 gap-8 text-white px-4 lg:px-12">
         <div className="flex flex-col justify-start items-start p-4 gap-4 bg-cp-color-6 rounded-lg mx-8">
           <div className="bg-cp-color-3 rounded-lg h-20 w-20 p-4 relative mb-4 sm:mt-[-40px] mt-[-60px]">
@@ -97,6 +92,13 @@ export default function LandingCards({}: Props) {
             <span>Explore Trending</span>
           </a>
         </div>
+      </div>
+      <div className="overflow-hidden w-screen h-max -z-[2] relative flex">
+        <img
+          src="https://cpwebassets.codepen.io/assets/packs/lines-4-4ea88270d73b7f6eaaa69e91aed97ddf.svg"
+          alt=""
+          className="w-[500px] sm:translate-x-0 -translate-x-36"
+        />
       </div>
     </div>
   );
