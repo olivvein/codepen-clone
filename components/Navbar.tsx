@@ -4,6 +4,7 @@ import { ThemeToggle } from "./ThemeToggle";
 import Link from "next/link";
 import Image from "next/image";
 
+
 function Navbar() {
   return (
     <div className="  left-0 right-0 top-0 z-50 flex fixed min-w-full h-20 items-center justify-between shadow-sm">
@@ -20,7 +21,7 @@ function Navbar() {
                 height={96}
               />
               <div className="antialiased opacity-75 text relative text-[1rem] font-extrabold leading-relaxed">
-                codepen v2
+                codepAIn
               </div>
             </div>
           </Link>
