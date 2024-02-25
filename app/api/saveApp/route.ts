@@ -1,11 +1,11 @@
 import sqlite3 from "sqlite3";
 import { promisify } from "util";
-import { v4 as uuidv4 } from "uuid";
+import type { NextApiRequest, NextApiResponse } from 'next'
+
 
 export async function POST(req: Request, res: Response) {
   const resData = await req.json();
-  let { htmlCode, visibleJsCode, appTitle } = resData;
-
+  const { htmlCode, visibleJsCode, appTitle } = resData;
 
   const cssCode = "";
   const db = new sqlite3.Database("myDatabase.db", (err) => {
@@ -45,8 +45,8 @@ export async function POST(req: Request, res: Response) {
   return new Response("inserted", { status: 200 });
 }
 
-export async function GET(req: Request, res: Response) {
-    const theApps: any[]=[];
+export async function GET(req: NextApiRequest, res: Response) {
+  const theApps: any[] = [];
   const db = new sqlite3.Database("myDatabase.db", (err) => {
     if (err) {
       return console.error(err.message);
@@ -54,18 +54,17 @@ export async function GET(req: Request, res: Response) {
     console.log("Connected to the SQlite database.");
   });
 
-const run = promisify(db.run).bind(db);
-const all = promisify(db.all).bind(db);
-try {
+  const run = promisify(db.run).bind(db);
+  const all = promisify(db.all).bind(db);
+  try {
     const rows: any[] = await all(`SELECT * FROM code`);
     rows.forEach((row) => {
-        theApps.push(row);
+      theApps.push(row);
     });
-} catch (error) {
+  } catch (error) {
     console.log("Error!!!!2");
     console.error(error);
-}
-
+  }
 
   return new Response(JSON.stringify(theApps), { status: 200 });
 }

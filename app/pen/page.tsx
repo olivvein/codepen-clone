@@ -9,7 +9,7 @@ export default function Pen() {
     <>
     
     <div className="flex flex-center justify-center flex-col min-h-[50vh] width-full">
-      
+      <Navbar />
       <NoSSR>
         <Editor />
       </NoSSR>

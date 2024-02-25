@@ -4,6 +4,9 @@ import Landing from "@/components/Landing";
 import LandingCards from "@/components/LandingCards";
 import StartTeam from "@/components/StartTeam";
 import { LampDemo } from "@/components/ui/Lamp";
+import Pen from "@/app/pens/page";
+
+
 
 export default function Home() {
   return (
@@ -12,7 +15,7 @@ export default function Home() {
       <HomeNav />
       <LampDemo />
 
-      <Footer />
+      <Pen />
     </div>
   );
 }

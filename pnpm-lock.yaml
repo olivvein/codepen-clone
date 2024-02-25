@@ -16,6 +16,7 @@ specifiers:
   '@uiw/codemirror-extensions-langs': ^4.21.23
   '@uiw/codemirror-theme-vscode': ^4.21.23
   '@uiw/react-codemirror': ^4.21.23
+  Button: link:@mui/material/Button
   ai: ^2.2.36
   autoprefixer: 10.4.14
   better-sqlite3: ^9.4.3
@@ -61,6 +62,7 @@ dependencies:
   '@uiw/codemirror-extensions-langs': 4.21.23
   '@uiw/codemirror-theme-vscode': 4.21.23
   '@uiw/react-codemirror': 4.21.23_biqbaboplfbrettd7655fr4n2y
+  Button: link:@mui/material/Button
   ai: 2.2.36_react@18.2.0
   autoprefixer: 10.4.14_postcss@8.4.24
   better-sqlite3: 9.4.3
