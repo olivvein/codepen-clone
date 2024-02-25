@@ -2,7 +2,7 @@
 
 import { SetStateAction, use, useContext, useEffect, useState } from "react";
 import * as Space from "react-spaces";
-import { HtmlCodeContext } from "@/components/Context";
+import { HtmlCodeContext ,HtmlCodesContext} from "@/components/Context";
 import Chat from "./Chat";
 import * as Babel from "@babel/standalone";
 import CodeEditor from "./CodeEditor";
@@ -11,13 +11,31 @@ import { vscodeDark } from "@uiw/codemirror-theme-vscode";
 import { javascript } from "@codemirror/lang-javascript";
 import { langs } from "@uiw/codemirror-extensions-langs";
 import { WavyBackground } from "@/components/ui/wavy-background";
-import axios from 'axios';
-
+import axios from "axios";
+import { markdown, markdownLanguage } from "@codemirror/lang-markdown";
+import { languages } from "@codemirror/language-data";
 
 export default function Editor() {
+  interface Messagess {
+    role: string;
+    content: string;
+  }
+
+  const [apps, setApps] = useState(["One"]);
   const [selectedLanguage, setSelectedLanguage] = useState("JavaScript");
 
+  const [fullMessages, setFullMessages] = useState([] as Messagess[]);
+  const [gtpMessages, setGtpMessages] = useState("");
+
   const [appTitle, setAppTitle] = useState("");
+
+  useEffect(() => {
+    console.log(fullMessages);
+    //get the last message
+    if (fullMessages.length === 0) return;
+    const lastMessage = fullMessages[fullMessages.length - 1];
+    setGtpMessages(lastMessage.content);
+  }, [fullMessages]);
 
   const OnLanguageChange = (event: {
     target: { value: SetStateAction<string> };
@@ -32,15 +50,15 @@ export default function Editor() {
   </div>
 </div>`);
 
-const saveCode = async () => {
-  const response = await axios.post('/api/saveApp', {
-    htmlCode,
-    cssCode,
-    visibleJsCode,
-    appTitle
-  });
-  console.log('Saved', response.data.id);
-};
+  const saveCode = async () => {
+    const response = await axios.post("/api/saveApp", {
+      htmlCode,
+      cssCode,
+      visibleJsCode,
+      appTitle,
+    });
+    console.log("Saved", response.data.id);
+  };
 
   const saveFullCode = (htmlCode: string, cssCode: string, jsCode: string) => {
     let fullCode = `<!DOCTYPE html>
@@ -75,6 +93,7 @@ const saveCode = async () => {
   };
 
   function transpileJSX(jsxCode: string) {
+    jsxCode = jsxCode.replace(/```/g, "");
     return Babel.transform(jsxCode, {
       presets: ["react"],
     }).code;
@@ -82,12 +101,16 @@ const saveCode = async () => {
 
   const onChange2 = (newValue, e) => {
     console.log("new Js Code : ");
-    //setJsCode(newValue);
+    setJsCode(newValue);
   };
 
   const handleHtmlChange2 = (newValue, e) => {
     console.log("new Js Code : ");
     setHtmlCode(newValue);
+  };
+
+  const handleHtmlChange3 = (newValue, e) => {
+    console.log("html update");
   };
 
   const extractCodeSnippetInMarkdown = (str: string) => {
@@ -132,10 +155,7 @@ const saveCode = async () => {
 
   useEffect(() => {
     let newHtmlCode = htmlCode;
-    console.log("newHtmlCode");
-    console.log(newHtmlCode);
     newHtmlCode = removeHTMLTags(newHtmlCode);
-    console.log(newHtmlCode);
     newHtmlCode = removeMarkDownCodeTags(newHtmlCode);
 
     setHtmlCode(newHtmlCode);
@@ -150,14 +170,22 @@ const saveCode = async () => {
     `import { setup as twindSetup } from 'https://cdn.skypack.dev/twind/shim'`
   );
 
+  const [selectedEditorView, setSelectedEditorView] = useState("HTML");
+
+  const OnselectedEditorViewChange = (event: {
+    target: { value: SetStateAction<string> };
+  }) => {
+    setSelectedEditorView(event.target.value);
+  };
+
   useEffect(() => {
     let newJsCode = jsCode;
-    console.log("newJsCode");
-    console.log(newJsCode);
+    //if newJsCode end with "END" remove it
+
     newJsCode = removeJSTags(newJsCode);
-    console.log(newJsCode);
     newJsCode = removeMarkDownCodeTags(newJsCode);
     setHtmlCode(removeHTMLTags(htmlCode));
+    newJsCode = newJsCode.replace(/```/g, "");
     try {
       newJsCode = transpileJSX(newJsCode);
     } catch (error) {
@@ -171,10 +199,7 @@ const saveCode = async () => {
 
   useEffect(() => {
     let newJsCode = removeBodyTags(visibleJsCode);
-    console.log("newJsCode");
-    console.log(newJsCode);
     newJsCode = removeJSTags(newJsCode);
-    console.log(newJsCode);
     newJsCode = removeMarkDownCodeTags(newJsCode);
 
     setVisibleJsCode(newJsCode);
@@ -215,9 +240,23 @@ const saveCode = async () => {
     setVisibleJsCode(code);
   };
 
+  const [appName, setAppName] = useState('');
+
+  const handleSubmitNewApp = (event: { preventDefault: () => void; }) => {
+    event.preventDefault();
+    setApps((prev) => [...prev, appName]);
+    console.log("Added new app");
+    setAppName("");
+  }
+
+
+  const theBasicSetup = { autocompletion: false };
+
   return (
     <HtmlCodeContext.Provider
       value={{
+        fullMessages,
+        setFullMessages,
         appTitle,
         setAppTitle,
         htmlCode,
@@ -231,11 +270,12 @@ const saveCode = async () => {
       }}
     >
       <div className="w-full">
-        <WavyBackground />
-        
+        <Chat />
+        <WavyBackground className="overflow-hidden" />
+
         <Space.ViewPort top={80} className="w-full">
           <Space.Fill trackSize={true}>
-            <Space.LeftResizable
+            {/* <Space.LeftResizable
               size="50%"
               touchHandleSize={20}
               trackSize={true}
@@ -245,21 +285,17 @@ const saveCode = async () => {
               <span className="leading-relaxed h-2 bg-slate-200/10 w-full  sticky  rounded-md dark:bg-slate-900/10 text-slate-900 dark:text-white">
                 HTML
               </span>
-              {/* <textarea
-                className="resize-none bg-slate-200/50 w-full h-full  dark:bg-slate-900 text-slate-900 dark:text-white"
-                value={htmlCode}
-                onChange={handleHtmlChange}
-                placeholder="<H1>Hi there</H1>"
-              /> */}
-              {/* <CodeEditor code={htmlCode} language="html" change={handleHtmlChange2} />  */}
+              
               <CodeMirror
                 onChange={handleHtmlChange2}
+                basicSetup={theBasicSetup}
                 value={htmlCode}
                 theme={vscodeDark}
                 lang="html"
+                height="100%"
                 extensions={[javascript({ jsx: true })]}
               />
-            </Space.LeftResizable>
+            </Space.LeftResizable> */}
 
             {/* <Space.Fill trackSize={true} scrollable={true}>
               <span className="leading-relaxed h-2  bg-slate-200/10 w-full  sticky  rounded-md dark:bg-slate-900/10 text-slate-900 dark:text-white">
@@ -274,8 +310,8 @@ const saveCode = async () => {
               />
             </Space.Fill> */}
 
-            <Space.RightResizable
-              size="50%"
+            <Space.LeftResizable
+              size="100%"
               touchHandleSize={20}
               trackSize={true}
               scrollable={true}
@@ -283,13 +319,24 @@ const saveCode = async () => {
             >
               <div className="flex items-center">
                 <select
-                  value={selectedLanguage}
-                  onChange={OnLanguageChange}
+                  value={selectedEditorView}
+                  onChange={OnselectedEditorViewChange}
                   className="bg-gray-300 hover:bg-gray-400 text-gray-800 py-auto px-auto rounded inline-flex items-center"
                 >
-                  <option value="JavaScript">JavaScript</option>
-                  <option value="Babel">Babel</option>
+                  <option value="HTML">HTML</option>
+                  <option value="JS">JS</option>
+                  <option value="GPT">GPT</option>
                 </select>
+                {selectedEditorView === "JS" ? (
+                  <select
+                    value={selectedLanguage}
+                    onChange={OnLanguageChange}
+                    className="bg-gray-300 hover:bg-gray-400 text-gray-800 py-auto px-auto rounded inline-flex items-center"
+                  >
+                    <option value="JavaScript">JavaScript</option>
+                    <option value="Babel">Babel</option>
+                  </select>
+                ) : null}
 
                 <button
                   onClick={downloadCode}
@@ -341,16 +388,30 @@ const saveCode = async () => {
               <CodeMirror
                 onChange={onChange2}
                 value={
-                  selectedLanguage === "JavaScript" ? visibleJsCode : jsCode
+                  selectedEditorView == "GPT"
+                    ? gtpMessages
+                    : selectedEditorView === "HTML"
+                      ? htmlCode
+                      : selectedLanguage === "JavaScript"
+                        ? visibleJsCode
+                        : jsCode
                 }
                 theme={vscodeDark}
+                height="100%"
                 lang="javascript"
-                extensions={[langs.tsx(), langs.jsx()]}
+                extensions={[
+                  langs.tsx(),
+                  langs.jsx(),
+                  markdown({
+                    base: markdownLanguage,
+                    codeLanguages: languages,
+                  }),
+                ]}
               />
-            </Space.RightResizable>
+            </Space.LeftResizable>
           </Space.Fill>
 
-          <Space.BottomResizable
+          <Space.RightResizable
             size="50%"
             touchHandleSize={20}
             trackSize={true}
@@ -358,16 +419,37 @@ const saveCode = async () => {
           >
             <Space.Fill>
               <h1>{appTitle}</h1>
-              <iframe
-                className="w-full h-full"
-                aria-label="Code preview"
-                sandbox="allow-forms allow-modals allow-pointer-lock allow-popups allow-presentation allow-same-origin allow-scripts"
-                srcDoc={`<html><style>${cssCode}</style><body>${htmlCode}<script type="module">${jsCode}</script><pre id="logs"></pre><script>${consoleLog}</script></body></html>`}
-              />
+              <form onSubmit={handleSubmitNewApp}>
+                <label>
+                  application :
+                  <input
+                    type="text"
+                    value={appName}
+                    onChange={(e) => setAppName(e.target.value)}
+                    required
+                  />
+                </label>
+                <input type="submit" value="Ajouter l'application " />
+                {apps.length}
+              </form>
+              
+              {apps.map((app, index) => (
+                <iframe
+                  key={index}
+                  className={`w-full `}
+                  style={{height: 1/apps.length*100 + '%'}}
+                  aria-label={`Code preview for ${app}`}
+                  sandbox="allow-forms allow-modals allow-pointer-lock allow-popups allow-presentation allow-same-origin allow-scripts"
+                  srcDoc={
+                    jsCode === ""
+                    ? ""
+                    : `<html><style>${cssCode}</style><body>${htmlCode}<script type="module">${jsCode}</script><pre id="logs"></pre><script>${consoleLog}</script></body></html>`
+                  }
+                />
+              ))}
             </Space.Fill>
-          </Space.BottomResizable>
+          </Space.RightResizable>
         </Space.ViewPort>
-        <Chat />
       </div>
     </HtmlCodeContext.Provider>
   );

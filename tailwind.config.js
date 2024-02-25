@@ -12,6 +12,15 @@ module.exports = {
   ],
   theme: {
     extend: {
+      height: {
+        '1/1': '100%',
+        '1/2': '50%',
+        '1/3': '33.333333%',
+        '1/4': '25%',
+        '1/5': '20%',
+        '1/6': '16.666667%',
+        // Ajoutez plus si nécessaire
+      },
       container: {
         center: true,
         padding: "1.5rem",

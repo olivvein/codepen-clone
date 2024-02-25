@@ -12,6 +12,7 @@ export default function Pen() {
   const [apps, setApps] = useState([]);
 
   function transpileJSX(jsxCode: string) {
+    jsxCode = jsxCode.replace(/```/g, "");
     return Babel.transform(jsxCode, {
       presets: ["react"],
     }).code;

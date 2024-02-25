@@ -8,6 +8,8 @@ import { HtmlCodeContext } from "@/components/Context";
 export default function Chat() {
   const { messages, input, handleInputChange, handleSubmit } = useChat();
   const {
+    fullMessages,
+    setFullMessages,
     appTitle,
     setAppTitle,
     htmlCode,
@@ -19,6 +21,11 @@ export default function Chat() {
     cssCode,
     setCssCode,
   } = useContext(HtmlCodeContext);
+
+  const handleSubmitInput = (e: any) => {
+    handleSubmit(e);
+    setJsCode("");
+  };
 
   const [timeOfTitle, setTimeOfTitle] = useState(0);
 
@@ -43,7 +50,8 @@ export default function Chat() {
     if (allMessages.length === 0) {
       return "Chat";
     }
-    allMessages[0].content ="You give this app a title based on the conversation";
+    allMessages[0].content =
+      "You give this app a title based on the conversation";
     allMessages.push({
       role: "user",
       content: "Give this app a title. Just reply the title.",
@@ -60,12 +68,11 @@ export default function Chat() {
         console.log(data);
         setAppTitle(data);
         setTimeOfTitle(Date.now());
-        
       })
       .catch((error) => {
         console.error("Error:", error);
       });
-    
+
     return allMessages[allMessages.length - 1].content;
   };
 
@@ -148,6 +155,13 @@ Allways use try catch to handle errors.
       //send the message to the editor to the right language
       console.log("newMessage");
       console.log(newMessage.content);
+      const newwMessage = {
+        role: newMessage.role,
+        content: newMessage.content,
+      };
+      // push the message to the fullMessages
+      setFullMessages((prev) => [...prev, newwMessage]);
+
       const snippets = extractMultipleCodeSnippetInMarkdown(newMessage.content);
       for (let i = 0; i < snippets.length; i++) {
         const language = detectLanguage(snippets[i]);
@@ -174,7 +188,7 @@ Allways use try catch to handle errors.
           console.log("elapsed");
           console.log(elapsed);
 
-          if (elapsed > 5*1000) {
+          if (elapsed > 5 * 1000) {
             console.log("getConversationTitle(messages)");
             getConversationTitle(messages);
           }
@@ -203,24 +217,15 @@ Allways use try catch to handle errors.
     }
   }, [messages]);
   return (
-    <div className="flex flex-col w-full max-w-md py-24 mx-auto stretch">
-      <form onSubmit={handleSubmit}>
+    <div className="absolute left-0 top-0 flex flex-col w-full max-w-md py-24 mx-auto stretch items-center justify-center">
+      <form onSubmit={handleSubmitInput}>
         <input
-          className="fixed bottom-0 w-full max-w-md p-2 mb-8 border border-gray-300 rounded shadow-xl"
+          className="absolute  left-1/2 top-0  w-full max-w-md p-2 mb-8 border border-gray-300 rounded shadow-xl z-50"
           value={input}
           placeholder="What do you want?"
           onChange={handleInputChange}
         />
-       
       </form>
-      
-
-      {/* {messages.map(m => (
-        <div key={m.id} className="">
-          {m.role === 'user' ? 'User: ' : 'AI: '}
-          {m.content}
-        </div>
-      ))} */}
     </div>
   );
 }

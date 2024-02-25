@@ -29,6 +29,7 @@ export default function Page({ params }: { params: { id: string } }) {
   }, []);
 
   function transpileJSX(jsxCode: string) {
+    jsxCode = jsxCode.replace(/```/g, "");
     return Babel.transform(jsxCode, {
       presets: ["react"],
     }).code;

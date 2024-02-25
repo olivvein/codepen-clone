@@ -3,6 +3,7 @@
 import { ThemeToggle } from "./ThemeToggle";
 import Link from "next/link";
 import Image from "next/image";
+import Chat from "./Chat";
 
 
 function Navbar() {
@@ -18,7 +19,6 @@ function Navbar() {
               </div>
             </div>
           </Link>
-          <ThemeToggle />
         </div>
         {/* For mobile view */}
         
