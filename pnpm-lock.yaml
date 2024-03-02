@@ -7,6 +7,7 @@ specifiers:
   '@codemirror/lang-javascript': ^6.2.2
   '@codemirror/lang-markdown': ^6.2.4
   '@codemirror/language-data': ^6.4.1
+  '@google/generative-ai': ^0.2.1
   '@nextui-org/react': ^2.2.9
   '@radix-ui/react-dialog': ^1.0.4
   '@radix-ui/react-dropdown-menu': ^2.0.5
@@ -28,6 +29,7 @@ specifiers:
   eslint-config-next: ^13.4.8
   framer-motion: ^11.0.6
   fs: 0.0.1-security
+  groq-sdk: ^0.3.1
   lucide-react: ^0.258.0
   monaco-editor: ^0.46.0
   next: 13.4.8
@@ -55,6 +57,7 @@ dependencies:
   '@codemirror/lang-javascript': 6.2.2
   '@codemirror/lang-markdown': 6.2.4
   '@codemirror/language-data': 6.4.1
+  '@google/generative-ai': 0.2.1
   '@nextui-org/react': 2.2.9_onwwyhexhasm3mz7nm2yfbv4i4
   '@radix-ui/react-dialog': 1.0.5_hrrtw4it2dqo6rzcqzvl36ff7i
   '@radix-ui/react-dropdown-menu': 2.0.6_hrrtw4it2dqo6rzcqzvl36ff7i
@@ -76,6 +79,7 @@ dependencies:
   eslint-config-next: 13.5.6_iqf7tbmerllfqanu4l3d6aqdn4
   framer-motion: 11.0.6_biqbaboplfbrettd7655fr4n2y
   fs: 0.0.1-security
+  groq-sdk: 0.3.1
   lucide-react: 0.258.0_react@18.2.0
   monaco-editor: 0.46.0
   next: 13.4.8_ogqwiwd4e24b5w6o4ksjhrnoye
@@ -817,6 +821,11 @@ packages:
     resolution: {integrity: sha512-k2Ty1JcVojjJFwrg/ThKi2ujJ7XNLYaFGNB/bWT9wGR+oSMJHMa5w+CUq6p/pVrKeNNgA7pCqEcjSnHVoqJQFw==}
     dev: false
     optional: true
+
+  /@google/generative-ai/0.2.1:
+    resolution: {integrity: sha512-gNmMFadfwi7qf/6M9gImgyGJXY1jKQ/de8vGOqgJ0PPYgQ7WwzZDavbKrIuXS2zdqZZaYtxW3EFN6aG9x5wtFw==}
+    engines: {node: '>=18.0.0'}
+    dev: false
 
   /@humanwhocodes/config-array/0.11.14:
     resolution: {integrity: sha512-3T8LkOmg45BV5FICb15QQMsyUSWrQ8AygVfC7ZG32zOalnqrilm018ZVCw0eapXux8FtA33q8PSRSstjee3jSg==}
@@ -5898,6 +5907,22 @@ packages:
 
   /graphemer/1.4.0:
     resolution: {integrity: sha512-EtKwoO6kxCL9WO5xipiHTZlSzBm7WLT627TqC/uVRd0HKmq8NXyebnNYxDoBi7wt8eTWrUrKXCOVaFq9x1kgag==}
+    dev: false
+
+  /groq-sdk/0.3.1:
+    resolution: {integrity: sha512-A3/u52JDBR1BzAmMCc+XceDJdNGc0KipDrJOWeIFIYMy6vz4hWvfJBFLXgoS7MHNcLZ4jG89L48JhH/ONcaiMA==}
+    dependencies:
+      '@types/node': 18.19.18
+      '@types/node-fetch': 2.6.11
+      abort-controller: 3.0.0
+      agentkeepalive: 4.5.0
+      digest-fetch: 1.3.0
+      form-data-encoder: 1.7.2
+      formdata-node: 4.4.1
+      node-fetch: 2.7.0
+      web-streams-polyfill: 3.3.3
+    transitivePeerDependencies:
+      - encoding
     dev: false
 
   /has-bigints/1.0.2:

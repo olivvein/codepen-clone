@@ -45,7 +45,7 @@ export async function POST(req: Request, res: Response) {
   return new Response("inserted", { status: 200 });
 }
 
-export async function GET(req: NextApiRequest, res: Response) {
+export async function GET(req: Request, res: Response) {
   const theApps: any[] = [];
   const db = new sqlite3.Database("myDatabase.db", (err) => {
     if (err) {

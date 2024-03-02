@@ -54,3 +54,21 @@ interface HtmlCodeContextType {
 }
 
 export const HtmlCodesContext = createContext<HtmlCodeContextType[]>([]);
+
+
+export interface AppType {
+    fullMessages: Message[];
+    setFullMessages: React.Dispatch<React.SetStateAction<Message[]>>;
+    appTitle: string;
+    setAppTitle: React.Dispatch<React.SetStateAction<string>>;
+    htmlCode: string;
+    setHtmlCode: React.Dispatch<React.SetStateAction<string>>;
+    jsCode: string;
+    setJsCode: React.Dispatch<React.SetStateAction<string>>;
+    visibleJsCode: string;
+    setVisibleJsCode: React.Dispatch<React.SetStateAction<string>>;
+    cssCode: string;
+    setCssCode: React.Dispatch<React.SetStateAction<string>>;
+  }
+  
+  export const HtmlCodeContext2 = createContext<AppType[]>([]);

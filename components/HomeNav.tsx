@@ -4,7 +4,7 @@ type Props = {};
 
 export default function HomeNav({}: Props) {
   return (
-    <div className="w-[100%] text-white flex flex-row items-center justify-around p-[2%] g-4 overflow-hidden ">
+    <div className="w-[100%] text-white flex flex-row items-center justify-around p-[2%] g-4 overflow-hidden z-100 ">
       <a href="/" className="sm:hidden  flex items-center px-4">
         <svg
           viewBox="0 0 100 100"

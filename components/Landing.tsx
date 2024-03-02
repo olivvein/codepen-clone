@@ -51,7 +51,7 @@ export default function Landing({}: Props) {
           </p>
         </div>
       </div>
-      <a href="/pen/" className="SidebarCreate-module_anonButton-5yd5b ">
+      <a href="/pen/new" className="SidebarCreate-module_anonButton-5yd5b ">
         <span>Start Coding</span>
       </a>
     </header>

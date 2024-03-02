@@ -1,12 +1,13 @@
 "use client";
 
-import { useChat } from "ai/react";
+import { useChat, Message } from "ai/react";
 import { ChangeEvent, use, useState, useContext, useEffect } from "react";
 import Editor from "@/components/Editor";
 import { HtmlCodeContext } from "@/components/Context";
 
 export default function Chat() {
-  const { messages, input, handleInputChange, handleSubmit } = useChat();
+  const { messages, input, handleInputChange, handleSubmit, setMessages } =
+    useChat();
   const {
     fullMessages,
     setFullMessages,
@@ -22,7 +23,32 @@ export default function Chat() {
     setCssCode,
   } = useContext(HtmlCodeContext);
 
+
+  const sendMessageGoogle = async (contentS:string) => {
+    try {
+      const response = await fetch('http://localhost:3000/api/googleChat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify([...messages, { role: "user", content:contentS,id:3 }] ),
+      });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      const updatedMessages = await response.json();
+      setMessages(updatedMessages);
+    } catch (error) {
+      console.error('Failed to send message: ', error);
+    }
+  };
+
   const handleSubmitInput = (e: any) => {
+    //e.preventDefault();
+    // console.log(e.target.children[0].value);
+    // console.log(e.target.value);
+    // messages[0].content = systemPrompt;
+    // sendMessageGoogle(e.target.children[0].value);
     handleSubmit(e);
     setJsCode("");
   };
@@ -33,8 +59,15 @@ export default function Chat() {
 
   const [title, setTitle] = useState("Chat");
 
+  const [oldMessages, setOldMessages] = useState<Message[]>([]);
+
   const getConversationTitle = (messages: any[]) => {
     const allMessages = [...messages];
+    console.log("allMessages");
+    console.log(messages);
+
+    console.log("oldMessages");
+    console.log(oldMessages);
     allMessages.forEach((m) => {
       try {
         delete m.id;
@@ -68,6 +101,9 @@ export default function Chat() {
         console.log(data);
         setAppTitle(data);
         setTimeOfTitle(Date.now());
+        messages[0].content = systemPrompt;
+
+        //resetMessages()
       })
       .catch((error) => {
         console.error("Error:", error);
@@ -96,24 +132,39 @@ export default function Chat() {
     return str.match(/html|css|js/)?.[0].replace("```", "") || "";
   };
 
-  const systemPrompt = `You only create HTML,JS and CSS code. 
+  const systemPrompt = `You are a pro developer in javascript html and react and tailwind.
+You can create really complex app with these languages.
+You have no limitation in the number of lines of code.
+If requested a full app, you will do it.
+You allways respond to user in one run.
+You can at the begining of a response explain the functionallity that you are going to implement, only if needed to plan the app.
+You only create HTML and JS. 
 The HTML will be is inside <BODY> tag.
 You write in md format. you only write good code.
 You will create each snippet separately for each language. 
 You only provide code snippets. no explaination, no title, no comment. 
 You use Tailwind and react.js
-Allways separate the html, css and js in separate code snippets.
+Allways separate the html  and js in separate code snippets.
 add theses imports to your js script :
 import React from "https://esm.sh/react";
 import ReactDOM from "https://esm.sh/react-dom";
 
 if you want to import a package, you can use a cdn like https://esm.sh/ 
-
+allways import tailwind like this :
 import { setup as twindSetup } from 'https://cdn.skypack.dev/twind/shim'
 allways make the app take 100% of available space, with dark background. 
 Use card and beautiful tailwind style to present the result.
 Allways use try catch to handle errors.
-  `;
+If you need to use an api, make sure it does not require an api key.
+for weather use wttr.in or an other free api that does not require an api key.
+https://api.open-meteo.com/v1/forecast?latitude={latitude}&longitude={longitude}&current_weather=true  => "current_weather"
+https://api.coingecko.com/api 
+https://api.multiversx.com/economics?extract=price for EGLD  => "price"
+https://www.francetvinfo.fr/titres.rss =>   entries "title" and "summary" and "links[0] as href " and "links[1] as image " For the News with feedparser library
+
+allways start by :
+appTitle: The title of the app
+`;
 
   useEffect(() => {
     messages.push({
@@ -123,6 +174,25 @@ Allways use try catch to handle errors.
     });
     setHtmlCode("<H1>Hi there 8</H1>");
   }, []);
+
+  const resetMessages = () => {
+    setMessages([
+      {
+        role: "system",
+        content: systemPrompt,
+        id: "0",
+      },
+    ]);
+
+    messages.push({
+      role: "system",
+      content: systemPrompt,
+      id: "0",
+    });
+    // console.log("oldMessages");
+    // console.log(oldMessages);
+    // setMessages(oldMessages);
+  };
 
   //For each new message I want to add the message.content to Editor htmlCode
 
@@ -136,7 +206,7 @@ Allways use try catch to handle errors.
     while ((match = regex.exec(str)) !== null) {
       matches.push(match);
     }
-    console.log(matches);
+    //console.log(matches);
     for (let i = matches.length - 1; i >= 0; i--) {
       if (!matches[i][3]) {
         // if the code snippet is not closed
@@ -153,14 +223,23 @@ Allways use try catch to handle errors.
     if (messages.length > 2) {
       const newMessage = messages[messages.length - 1];
       //send the message to the editor to the right language
-      console.log("newMessage");
-      console.log(newMessage.content);
+      //console.log("newMessage");
+      //console.log(newMessage.content);
       const newwMessage = {
         role: newMessage.role,
         content: newMessage.content,
       };
       // push the message to the fullMessages
       setFullMessages((prev) => [...prev, newwMessage]);
+
+      const matchAppTitle = newMessage.content.match(/appTitle:(.*)\n/);
+      if (matchAppTitle) {
+        const newTitle = matchAppTitle[1].trim();
+        if (newTitle) {
+          setAppTitle(newTitle);
+          setTimeOfTitle(Date.now());
+        }
+      }
 
       const snippets = extractMultipleCodeSnippetInMarkdown(newMessage.content);
       for (let i = 0; i < snippets.length; i++) {
@@ -178,27 +257,30 @@ Allways use try catch to handle errors.
           setCssCode(snippets[i]);
         }
         if (language === "js") {
+          snippets[i] = snippets[i].replace("```jsx", "```");
           snippets[i] = snippets[i].replace("```js", "```");
           snippets[i] = snippets[i].replace("```javascript", "```");
-          snippets[i] = snippets[i].replace("```", "");
+          snippets[i] = snippets[i].replace(/```/g, "");
           setJsCode(snippets[i]);
           setVisibleJsCode(snippets[i]);
           //if time of title is less than 5 minutes, I want to change the title
           const elapsed = Date.now() - timeOfTitle;
-          console.log("elapsed");
-          console.log(elapsed);
+          //console.log("elapsed");
+          //console.log(elapsed);
 
-          if (elapsed > 5 * 1000) {
-            console.log("getConversationTitle(messages)");
-            getConversationTitle(messages);
+          if (elapsed > 1 * 1000) {
+            //console.log("getConversationTitle(messages)");
+            setOldMessages(messages);
+
+            //find in message.content the string after "appTitle:"
+
+            //setAppTitle("data");
           }
         }
       }
 
       const liveSnippet = extractNonCodeParts(newMessage.content);
       if (liveSnippet) {
-        console.log("liveSnippet");
-        console.log(liveSnippet);
         let liveSnippetString = liveSnippet.join("");
         if (
           liveSnippetString &&
@@ -217,15 +299,21 @@ Allways use try catch to handle errors.
     }
   }, [messages]);
   return (
-    <div className="absolute left-0 top-0 flex flex-col w-full max-w-md py-24 mx-auto stretch items-center justify-center">
+    <div className="absolute right-0 top-0 flex flex-col w-full  max-w-md py-2 mx-auto stretch items-center justify-center">
       <form onSubmit={handleSubmitInput}>
         <input
-          className="absolute  left-1/2 top-0  w-full max-w-md p-2 mb-8 border border-gray-300 rounded shadow-xl z-50"
+          className="absolute  left-0 top-0  w-full max-w-md p-2 mb-8 border border-gray-300 rounded shadow-xl z-50"
           value={input}
           placeholder="What do you want?"
           onChange={handleInputChange}
         />
       </form>
+      <button
+        onClick={resetMessages}
+        className="absolute  right-0 top-0  w-50 max-w-md p-2 mb-8 border border-gray-300 rounded shadow-xl z-50"
+      >
+        reset
+      </button>
     </div>
   );
 }

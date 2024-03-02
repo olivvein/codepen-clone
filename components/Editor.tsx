@@ -2,7 +2,7 @@
 
 import { SetStateAction, use, useContext, useEffect, useState } from "react";
 import * as Space from "react-spaces";
-import { HtmlCodeContext ,HtmlCodesContext} from "@/components/Context";
+import { HtmlCodeContext, HtmlCodeContext2 } from "@/components/Context";
 import Chat from "./Chat";
 import * as Babel from "@babel/standalone";
 import CodeEditor from "./CodeEditor";
@@ -15,27 +15,73 @@ import axios from "axios";
 import { markdown, markdownLanguage } from "@codemirror/lang-markdown";
 import { languages } from "@codemirror/language-data";
 
-export default function Editor() {
+export default function Editor(paramsId :number|string ) {
   interface Messagess {
     role: string;
     content: string;
   }
 
+  console.log("paramsId");
+  if(paramsId && paramsId.paramsId){
+  console.log(paramsId.paramsId);
+  }
+
+  useEffect(() => {
+    if(paramsId && paramsId.paramsId){
+      console.log(paramsId.paramsId);
+      if(paramsId.paramsId=="new"){
+        console.log("New Pen");
+
+      }else{
+        console.log("Existing Pen");
+        fetch('/api/getApp', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ id: paramsId.paramsId }), // Convertit l'objet JavaScript en chaîne JSON
+        })
+        .then(response => response.json()) // Convertit la réponse en JSON
+        .then(data => {
+          console.log(data[0]);
+          setHtmlCode(data[0].htmlCode);
+          setVisibleJsCode(data[0].visibleJsCode);
+          setJsCode(data[0].visibleJsCode);
+        }) // Affiche les données dans la console
+        .catch((error) => {
+          console.error('Erreur:', error);
+        });
+      }
+    }
+  }, []);
+  
   const [apps, setApps] = useState(["One"]);
+  const [appsForEditor, setAppsForEditor] = useState([]);
   const [selectedLanguage, setSelectedLanguage] = useState("JavaScript");
 
   const [fullMessages, setFullMessages] = useState([] as Messagess[]);
   const [gtpMessages, setGtpMessages] = useState("");
 
-  const [appTitle, setAppTitle] = useState("");
-
+  //useEffect for gptMessages get only the last message
   useEffect(() => {
-    console.log(fullMessages);
-    //get the last message
     if (fullMessages.length === 0) return;
     const lastMessage = fullMessages[fullMessages.length - 1];
+
     setGtpMessages(lastMessage.content);
   }, [fullMessages]);
+
+  interface iFrameApp {
+    id: string;
+    appTitle: string;
+    cssCode: string;
+    htmlCode: string;
+    visibleJsCode: string;
+  }
+
+  //make a type for the app
+  const [oldApps, setOldApps] = useState<iFrameApp[]>([]);
+
+  const [appTitle, setAppTitle] = useState("CodepAIn");
 
   const OnLanguageChange = (event: {
     target: { value: SetStateAction<string> };
@@ -51,13 +97,16 @@ export default function Editor() {
 </div>`);
 
   const saveCode = async () => {
+  
     const response = await axios.post("/api/saveApp", {
       htmlCode,
       cssCode,
       visibleJsCode,
       appTitle,
     });
-    console.log("Saved", response.data.id);
+    console.log(htmlCode);
+    console.log(visibleJsCode);
+    console.log("Saved");
   };
 
   const saveFullCode = (htmlCode: string, cssCode: string, jsCode: string) => {
@@ -82,8 +131,128 @@ export default function Editor() {
     return fullCode;
   };
 
+  const saveFullCodeMultiple = (
+    htmlCode: string,
+    cssCode: string,
+    jsCode: string
+  ) => {
+    let fullIframes = "";
+    let fullScript = "";
+
+    let fullCodes = [];
+
+    oldApps.forEach((app) => {
+      let fullCode = `<!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>${app.appTitle}</title>
+        <style>
+          ${app.cssCode}
+        </styl>
+      </head>
+      <body>
+        ${app.htmlCode}
+        <script type="module">
+          ${app.visibleJsCode}
+        </scrip>
+      </bod>
+      </htm>`;
+
+      fullIframes +=
+        `<iframe style={height: ` +
+        100 / (oldApps.length + 1) +
+        `% } srcdoc="${encodeURIComponent(fullCode)}"
+        sandbox="allow-forms allow-modals allow-pointer-lock allow-popups allow-presentation allow-same-origin allow-scripts"
+        ></iframe>`;
+
+      fullCodes.push(fullCode);
+    });
+
+    let fcode = saveFullCode(htmlCode, cssCode, jsCode);
+    fcode = fcode.replace(/style>/g, "styl>");
+    fcode = fcode.replace(/script>/g, "scrip>");
+    fcode = fcode.replace(/body>/g, "bod>");
+    fcode = fcode.replace(/html>/g, "htm>");
+    fullCodes.push(fcode);
+
+    fullIframes +=
+      `<iframe style={height: ` +
+      100 / (oldApps.length + 1) +
+      `% } srcdoc="${encodeURIComponent(fcode)}"
+        sandbox="allow-forms allow-modals allow-pointer-lock allow-popups allow-presentation allow-same-origin allow-scripts"
+        ></iframe>`;
+
+    fullCodes.forEach((code, index) => {
+      fullScript +=
+        `<script >
+      var htmlContent='${code.replace(/\n/g, "").replace(/'/g, "\\'")}';
+      htmlContent = htmlContent.replace(/styl>/g,"style>");
+      htmlContent = htmlContent.replace(/scrip>/g,"script>");
+      htmlContent = htmlContent.replace(/bod>/g,"body>");
+      htmlContent = htmlContent.replace(/htm>/g,"html>");
+      var iframe = document.createElement('iframe');
+      iframe.srcdoc = htmlContent;
+      iframe.style="height: ` +
+        100 / oldApps.length +
+        `%, width: 100%,height: 100%";
+      iframe.classList.add("w-full")
+      iframe.classList.add("h-full");
+      iframe.sandbox = "allow-forms allow-modals allow-pointer-lock allow-popups allow-presentation allow-same-origin allow-scripts";
+
+      var iframeContainer=document.getElementById("iframeContainer");
+      iframeContainer.appendChild(iframe);
+      </script>`;
+    });
+
+    let fullCodeFinal = `<!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodepAIn</title>
+    <style>
+    #iframeContainer {
+      display: grid;
+      grid-template-rows: ${(1 / fullCodes.length) * 100}% 50%; /* Adjust this as needed */
+      height: 100vh; /* This makes the container take the full height of the viewport */
+      width: 100%; /* This makes the container take the full width */
+    }
+    iframe {
+      width: 100%; /* Full width */
+      height: 100%; /* Adjusted by grid to 50% of the container's height */
+      border: none; /* Optional: Removes the default iframe border */
+    }
+  </style>
+    
+
+  </head>
+  <body>
+  <script type=module>
+  import { setup as twindSetup } from 'https://cdn.skypack.dev/twind/shim';
+  </script>
+
+  
+   
+  <div id="iframeContainer" class="w-full h-full">
+  </div>
+    
+  </body>
+  ${fullScript}
+  </html>`;
+
+    return fullCodeFinal;
+  };
+
   const downloadCode = () => {
-    const code = saveFullCode(htmlCode, cssCode, jsCode);
+    let code = "";
+    if (oldApps.length !== 0) {
+      code = saveFullCodeMultiple(htmlCode, cssCode, jsCode);
+    } else {
+      code = saveFullCode(htmlCode, cssCode, jsCode);
+    }
+
     const element = document.createElement("a");
     const file = new Blob([code], { type: "text/html" });
     element.href = URL.createObjectURL(file);
@@ -101,7 +270,17 @@ export default function Editor() {
 
   const onChange2 = (newValue, e) => {
     console.log("new Js Code : ");
-    setJsCode(newValue);
+    if (selectedEditorView === "JS") {
+      if(selectedLanguage=="JavaScript"){
+        setVisibleJsCode(newValue);
+        setJsCode(newValue);
+      }
+      
+      
+    } 
+    if (selectedEditorView === "HTML") {
+      setHtmlCode(newValue);
+    } 
   };
 
   const handleHtmlChange2 = (newValue, e) => {
@@ -118,7 +297,7 @@ export default function Editor() {
   };
 
   const detectLanguage = (str: string) => {
-    return str.match(/```html|```css|```js/)?.[0].replace("```", "") || "";
+    return str.match(/```html|```css|```js|```jsx/)?.[0].replace("```", "") || "";
   };
 
   const removeMarkDownCodeTags = (str: string) => {
@@ -133,25 +312,37 @@ export default function Editor() {
   };
 
   const removeJSTags = (str: string) => {
-    return str.replace("```js", "```");
+    return str.replace("```jsx", "```").replace("```js", "```");
   };
 
   const removeCSSTags = (str: string) => {
     return str.replace("```css", "```");
   };
 
-  const consoleLog = `var oldLog = console.log;
+  const consoleLog = `var oldLog = console.log;var oldError = console.error;
   var logElement = document.getElementById('logs');
 
   console.log = function (message) {
+    
       if (typeof message == 'object') {
           logElement.innerHTML += message + '<br />';
       } else {
-          logElement.innerHTML += message + '<br />';
+        var stack = new Error().stack;
+          logElement.innerHTML += message+"\\n"+ stack.split("\\n").slice(2).join("\\n")+  '<br />';
       }
       oldLog.apply(console, arguments);
+      
   };
-  console.error=console.log;`;
+
+  console.error = function (message) {
+    if (typeof message == 'object') {
+        logElement.innerHTML += '<span style="color:red">'+message+'</span> '+ '<br />';
+    } else {
+      var stack = new Error().stack;
+        logElement.innerHTML +=  '<span style="color:red">'+message+"\\n"+ stack.split("\\n").slice(2).join("\\n")+'</span> ' + '<br />';
+    }
+    oldError.apply(console, arguments);
+  };`;
 
   useEffect(() => {
     let newHtmlCode = htmlCode;
@@ -170,7 +361,7 @@ export default function Editor() {
     `import { setup as twindSetup } from 'https://cdn.skypack.dev/twind/shim'`
   );
 
-  const [selectedEditorView, setSelectedEditorView] = useState("HTML");
+  const [selectedEditorView, setSelectedEditorView] = useState("JS");
 
   const OnselectedEditorViewChange = (event: {
     target: { value: SetStateAction<string> };
@@ -184,7 +375,6 @@ export default function Editor() {
 
     newJsCode = removeJSTags(newJsCode);
     newJsCode = removeMarkDownCodeTags(newJsCode);
-    setHtmlCode(removeHTMLTags(htmlCode));
     newJsCode = newJsCode.replace(/```/g, "");
     try {
       newJsCode = transpileJSX(newJsCode);
@@ -205,52 +395,63 @@ export default function Editor() {
     setVisibleJsCode(newJsCode);
   }, [visibleJsCode]);
 
-  useEffect(() => {
-    let newHtmlCode = cssCode;
-    newHtmlCode = removeCSSTags(newHtmlCode);
-    newHtmlCode = removeMarkDownCodeTags(newHtmlCode);
+  const [appName, setAppName] = useState("");
 
-    setCssCode(newHtmlCode);
-  }, [cssCode]);
-
-  const handleHtmlChange = (event: {
-    target: { value: SetStateAction<string> };
-  }) => {
-    const strVal = event.target.value.toString();
-    setHtmlCode(strVal);
-  };
-
-  const handleCssChange = (event: {
-    target: { value: SetStateAction<string> };
-  }) => {
-    setCssCode(event.target.value);
-  };
-
-  const handleJsChange = (event: {
-    target: { value: SetStateAction<string> };
-  }) => {
-    console.log("Js Change");
-    setJsCode(event.target.value);
-    setVisibleJsCode(event.target.value);
-  };
-
-  const handleJsChange2 = (code: string) => {
-    console.log("Js Change");
-    setJsCode(code);
-    setVisibleJsCode(code);
-  };
-
-  const [appName, setAppName] = useState('');
-
-  const handleSubmitNewApp = (event: { preventDefault: () => void; }) => {
+  const handleSubmitNewApp = (event: { preventDefault: () => void }) => {
     event.preventDefault();
     setApps((prev) => [...prev, appName]);
+    setOldApps((prev) => [
+      ...prev,
+      {
+        id: appName,
+        appTitle: appName,
+        cssCode: cssCode,
+        htmlCode: htmlCode,
+        visibleJsCode: jsCode,
+      },
+    ]);
     console.log("Added new app");
     setAppName("");
-  }
-
+  };
 
   const theBasicSetup = { autocompletion: false };
+
+  interface Message {
+    role: string;
+    content: string;
+  }
+
+  interface HtmlCodeContextType {
+    fullMessages: Message[] | []; // Updated type
+    setFullMessages: React.Dispatch<React.SetStateAction<Message[]>>;
+    appTitle: string;
+    setAppTitle: React.Dispatch<React.SetStateAction<string>>;
+    htmlCode: string;
+    setHtmlCode: React.Dispatch<React.SetStateAction<string>>;
+    jsCode: string;
+    setJsCode: React.Dispatch<React.SetStateAction<string>>;
+    visibleJsCode: string;
+    setVisibleJsCode: React.Dispatch<React.SetStateAction<string>>;
+    cssCode: string;
+    setCssCode: React.Dispatch<React.SetStateAction<string>>;
+  }
+
+  const [htmlCodes, setHtmlCodes] = useState<HtmlCodeContextType[]>([
+    {
+      fullMessages: [],
+      setFullMessages: () => {},
+      appTitle: "",
+      setAppTitle: () => {},
+      htmlCode: "",
+      setHtmlCode: () => {},
+      jsCode: "",
+      setJsCode: () => {},
+      visibleJsCode: "",
+      setVisibleJsCode: () => {},
+      cssCode: "",
+      setCssCode: () => {},
+    },
+  ]);
 
   return (
     <HtmlCodeContext.Provider
@@ -418,35 +619,43 @@ export default function Editor() {
             scrollable={true}
           >
             <Space.Fill>
-              <h1>{appTitle}</h1>
               <form onSubmit={handleSubmitNewApp}>
                 <label>
                   application :
                   <input
                     type="text"
-                    value={appName}
-                    onChange={(e) => setAppName(e.target.value)}
+                    value={appTitle}
+                    onChange={(e) => setAppName(appTitle)}
                     required
                   />
                 </label>
                 <input type="submit" value="Ajouter l'application " />
                 {apps.length}
               </form>
-              
-              {apps.map((app, index) => (
+
+              {oldApps.map((app, index) => (
                 <iframe
                   key={index}
                   className={`w-full `}
-                  style={{height: 1/apps.length*100 + '%'}}
+                  style={{ height: (1 / (oldApps.length + 1)) * 100 + "%" }}
                   aria-label={`Code preview for ${app}`}
                   sandbox="allow-forms allow-modals allow-pointer-lock allow-popups allow-presentation allow-same-origin allow-scripts"
-                  srcDoc={
-                    jsCode === ""
-                    ? ""
-                    : `<html><style>${cssCode}</style><body>${htmlCode}<script type="module">${jsCode}</script><pre id="logs"></pre><script>${consoleLog}</script></body></html>`
-                  }
+                  srcDoc={`<html><style>${app.cssCode}</style><body><h1>${app.appTitle}</h1>${app.htmlCode}<script type="module">${app.visibleJsCode}</script><pre class="fixed opacity-50 bottom-12 w-full bg-black text-white" id="logs"></pre><script>${consoleLog}</script></body></html>`}
                 />
               ))}
+              <h1>{appTitle}</h1>
+              <iframe
+                key="abscodlkjehslij"
+                className={`w-full `}
+                style={{ height: (1 / (oldApps.length + 1)) * 100 + "%" }}
+                aria-label={`Code preview for`}
+                sandbox="allow-forms allow-modals allow-pointer-lock allow-popups allow-presentation allow-same-origin allow-scripts"
+                srcDoc={
+                  jsCode === ""
+                    ? ""
+                    : `<html><style>${cssCode}</style><body>${htmlCode}<script type="module">${jsCode}</script><div class="fixed bottom-0"><pre class="fixed opacity-50 bottom-12 w-full bg-black text-white" id="logs"></pre></div><script>${consoleLog}</script></body></html>`
+                }
+              />
             </Space.Fill>
           </Space.RightResizable>
         </Space.ViewPort>

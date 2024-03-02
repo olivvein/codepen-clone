@@ -19,6 +19,14 @@ function Navbar() {
               </div>
             </div>
           </Link>
+          <Link href="/pen/new">
+            <div className="flex flex-row gap-1 items-center">
+              
+              <div className="antialiased opacity-75 text relative text-[1rem] font-extrabold leading-relaxed">
+                New_Pen
+              </div>
+            </div>
+          </Link>
         </div>
         {/* For mobile view */}
         

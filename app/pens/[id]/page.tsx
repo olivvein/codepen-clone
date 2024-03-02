@@ -26,7 +26,7 @@ export default function Page({ params }: { params: { id: string } }) {
     .catch((error) => {
       console.error('Erreur:', error);
     });
-  }, []);
+  });
 
   function transpileJSX(jsxCode: string) {
     jsxCode = jsxCode.replace(/```/g, "");
