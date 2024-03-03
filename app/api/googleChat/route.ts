@@ -5,7 +5,7 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 // Set the runtime to edge for best performance
 export const runtime = "edge";
 
-const genAI = new GoogleGenerativeAI("AIzaSyA5UpuV9gZkDtdnpoUKrEp38XBnqtmoqoo");
+const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY!);
 
 const systemPrompt = `You are a pro developer in javascript html and react and tailwind.
 You can create really complex app with these languages.
