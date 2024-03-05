@@ -30,7 +30,7 @@ def upload_image():
             image = Image.open(BytesIO(response.content))
             image_path = os.path.join(images_dir, prompt+".png")
             image.save(image_path)
-            return jsonify({'message': 'Image saved successfully', 'path': "http://localhost:3001/images/"+prompt+".png"}), 200
+            return jsonify({'message': 'Image saved successfully', 'path': "http://localhost:3000/images/"+prompt+".png"}), 200
         else:
             return jsonify({'error': 'Failed to fetch image from URL'}), 400
     except Exception as e:

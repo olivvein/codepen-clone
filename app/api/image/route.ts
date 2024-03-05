@@ -33,6 +33,7 @@ export async function POST(req: Request, res: Response) {
     });
     const upload_response_json = await upload_response.json();
     console.log(upload_response_json);
+    const response2={image_url:upload_response_json.path,prompt:prompt}
 
-  return new Response(upload_response_json.path,{ status: 200 });
+  return new Response(JSON.stringify(response2),{ status: 200 });
 }

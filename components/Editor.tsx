@@ -21,10 +21,7 @@ export default function Editor(paramsId :number|string ) {
     content: string;
   }
 
-  console.log("paramsId");
-  if(paramsId && paramsId.paramsId){
-  console.log(paramsId.paramsId);
-  }
+  
 
   useEffect(() => {
     if(paramsId && paramsId.paramsId){

@@ -1,13 +1,15 @@
 "use client";
 
 import { useChat, Message } from "ai/react";
-import { ChangeEvent, use, useState, useContext, useEffect } from "react";
+import { ChangeEvent, use, useState, useContext, useEffect ,FormEvent} from "react";
 import Editor from "@/components/Editor";
 import { HtmlCodeContext } from "@/components/Context";
 
 export default function Chat() {
-  const { messages, input, handleInputChange, handleSubmit, setMessages } =
+  const { messages, input,setInput, handleInputChange, handleSubmit, setMessages } =
     useChat();
+
+
   const {
     fullMessages,
     setFullMessages,
@@ -43,23 +45,47 @@ export default function Chat() {
     }
   };
 
+  const handleInputCode=()=>{
+    console.log("handleInputCode");
+    const formElement = document.getElementById("form");
+
+        // Créez un nouvel événement de soumission de formulaire
+        const submitEvent = new Event('submit', { bubbles: true, cancelable: true });
+        
+        // Associez l'événement de soumission à l'élément de formulaire
+        formElement?.dispatchEvent(submitEvent);
+        
+        // Créez un FormEvent à partir de l'événement de soumission
+        const formEvent: FormEvent<HTMLFormElement> = submitEvent as unknown as FormEvent<HTMLFormElement>;
+        // Appelez handleSubmit avec le FormEvent
+        //handleSubmitInput(formEvent);
+  }
+
   const handleSubmitInput = (e: any) => {
-    //e.preventDefault();
+    console.log("Will Submit");
+    try {
+      e.preventDefault();
+    } catch (error) {
+      console.log(error)
+    }
+    console.log("Will Submit 2");
+   
     // console.log(e.target.children[0].value);
     // console.log(e.target.value);
     // messages[0].content = systemPrompt;
     // sendMessageGoogle(e.target.children[0].value);
-    handleSubmit(e);
+
+    try {
+      handleSubmit(e);
+    } catch (error) {
+      console.log(error)
+    }
+    
+    
     setJsCode("");
   };
 
-  const [timeOfTitle, setTimeOfTitle] = useState(0);
-
-  const editor = Editor();
-
-  const [title, setTitle] = useState("Chat");
-
-  const [oldMessages, setOldMessages] = useState<Message[]>([]);
+  const editor = Editor("");
 
   const getConversationTitle = (messages: any[]) => {
     const allMessages = [...messages];
@@ -100,7 +126,7 @@ export default function Chat() {
       .then((data) => {
         console.log(data);
         setAppTitle(data);
-        setTimeOfTitle(Date.now());
+        //setTimeOfTitle(Date.now());
         messages[0].content = systemPrompt;
 
         //resetMessages()
@@ -237,8 +263,23 @@ appTitle: The title of the app
         const newTitle = matchAppTitle[1].trim();
         if (newTitle) {
           setAppTitle(newTitle);
-          setTimeOfTitle(Date.now());
+          //setTimeOfTitle(Date.now());
         }
+      }
+
+      if(newMessage.content.indexOf("image_url:")!=-1){
+        let newwMessage ="";
+        for (const mess of fullMessages){
+          newwMessage+=mess.content+"\nNow make the app\n";
+        
+        }
+        
+        //setInput(newwMessage);
+
+      
+       
+        
+
       }
 
       const snippets = extractMultipleCodeSnippetInMarkdown(newMessage.content);
@@ -264,18 +305,7 @@ appTitle: The title of the app
           setJsCode(snippets[i]);
           setVisibleJsCode(snippets[i]);
           //if time of title is less than 5 minutes, I want to change the title
-          const elapsed = Date.now() - timeOfTitle;
-          //console.log("elapsed");
-          //console.log(elapsed);
-
-          if (elapsed > 1 * 1000) {
-            //console.log("getConversationTitle(messages)");
-            setOldMessages(messages);
-
-            //find in message.content the string after "appTitle:"
-
-            //setAppTitle("data");
-          }
+          
         }
       }
 
@@ -300,7 +330,7 @@ appTitle: The title of the app
   }, [messages]);
   return (
     <div className="absolute right-0 top-0 flex flex-col w-full  max-w-md py-2 mx-auto stretch items-center justify-center">
-      <form onSubmit={handleSubmitInput}>
+      <form onSubmit={handleSubmitInput} id="form">
         <input
           className="absolute  left-0 top-0  w-full max-w-md p-2 mb-8 border border-gray-300 rounded shadow-xl z-50"
           value={input}
@@ -314,6 +344,15 @@ appTitle: The title of the app
       >
         reset
       </button>
+
+      <button
+        onClick={handleInputCode}
+        className="absolute  right-0 top-0  w-50 max-w-md p-2 mb-8 border border-gray-300 rounded shadow-xl z-50"
+      >
+        handleInputCode
+      </button>
+
+
     </div>
   );
 }
