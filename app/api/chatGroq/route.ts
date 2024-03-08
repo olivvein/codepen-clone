@@ -8,7 +8,7 @@ import { OpenAIStream, StreamingTextResponse } from 'ai';
 // Set the runtime to edge for best performance
 export const runtime = 'edge';
 
-const groq = new Groq({ apiKey: "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" });
+const groq = new Groq({ apiKey: process.env.GROQ_API_KEY});
  
 export async function POST(req: Request) {
   const { messages } = await req.json();

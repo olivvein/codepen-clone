@@ -14,8 +14,9 @@ import { WavyBackground } from "@/components/ui/wavy-background";
 import axios from "axios";
 import { markdown, markdownLanguage } from "@codemirror/lang-markdown";
 import { languages } from "@codemirror/language-data";
+import ImageList from "@/components/ImageList";
 
-export default function Editor(paramsId :number|string ) {
+export default function Editor(paramsId :{paramsId :string} ) {
   interface Messagess {
     role: string;
     content: string;
@@ -242,6 +243,14 @@ export default function Editor(paramsId :number|string ) {
     return fullCodeFinal;
   };
 
+
+  useEffect(() => {
+    setHtmlCode(htmlCode);
+    setVisibleJsCode(visibleJsCode+"\n//");
+    setJsCode(jsCode+"\n//");
+
+  },[gtpMessages]);
+
   const downloadCode = () => {
     let code = "";
     if (oldApps.length !== 0) {
@@ -265,7 +274,7 @@ export default function Editor(paramsId :number|string ) {
     }).code;
   }
 
-  const onChange2 = (newValue, e) => {
+  const onChange2 = (newValue: SetStateAction<string>, e: any) => {
     console.log("new Js Code : ");
     if (selectedEditorView === "JS") {
       if(selectedLanguage=="JavaScript"){
@@ -280,18 +289,9 @@ export default function Editor(paramsId :number|string ) {
     } 
   };
 
-  const handleHtmlChange2 = (newValue, e) => {
-    console.log("new Js Code : ");
-    setHtmlCode(newValue);
-  };
+  
 
-  const handleHtmlChange3 = (newValue, e) => {
-    console.log("html update");
-  };
-
-  const extractCodeSnippetInMarkdown = (str: string) => {
-    return str.match(/```([\s\S]*)```/)?.[1] || "";
-  };
+  
 
   const detectLanguage = (str: string) => {
     return str.match(/```html|```css|```js|```jsx/)?.[0].replace("```", "") || "";
@@ -374,7 +374,7 @@ export default function Editor(paramsId :number|string ) {
     newJsCode = removeMarkDownCodeTags(newJsCode);
     newJsCode = newJsCode.replace(/```/g, "");
     try {
-      newJsCode = transpileJSX(newJsCode);
+      newJsCode = transpileJSX(newJsCode) as string;
     } catch (error) {
       console.log("error on Transpile");
       console.log(error);
@@ -524,6 +524,7 @@ export default function Editor(paramsId :number|string ) {
                   <option value="HTML">HTML</option>
                   <option value="JS">JS</option>
                   <option value="GPT">GPT</option>
+                  <option value="Images">Images</option>
                 </select>
                 {selectedEditorView === "JS" ? (
                   <select
@@ -582,8 +583,7 @@ export default function Editor(paramsId :number|string ) {
                 onChange={handleJsChange}
                 placeholder="JavaScript code here..."
               /> */}
-
-              <CodeMirror
+              {selectedEditorView=="Images" ? <ImageList /> : <CodeMirror
                 onChange={onChange2}
                 value={
                   selectedEditorView == "GPT"
@@ -605,7 +605,8 @@ export default function Editor(paramsId :number|string ) {
                     codeLanguages: languages,
                   }),
                 ]}
-              />
+              />}
+              
             </Space.LeftResizable>
           </Space.Fill>
 

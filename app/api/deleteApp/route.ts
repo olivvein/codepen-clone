@@ -29,8 +29,7 @@ export async function POST(req: Request, res: Response) {
 
   try {
     await run(
-      `DELETE FROM code WHERE id = ?`,
-      [id]
+      'DELETE FROM code WHERE id = '+id
     );
     
     console.log(`A row has been inserted`);

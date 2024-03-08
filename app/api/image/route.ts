@@ -7,13 +7,18 @@ const openai = new OpenAI({
 export const runtime = "edge";
 
 export async function POST(req: Request, res: Response) {
-  const { prompt } = await req.json();
+  let { prompt,size} = await req.json();
+
+  //replace every , by "" 
+  
+  console.log("Generate image: " + prompt);
+  console.log("Size: " + size);
 
   const response = await openai.images.generate({
     model: "dall-e-3",
     prompt: prompt,
     n: 1,
-    size: "1024x1024",
+    size: size,
     quality: "hd",
   });
   const image_url = response.data[0].url;
@@ -22,7 +27,7 @@ export async function POST(req: Request, res: Response) {
   if (!image_url) {
     return new Response("No image found", { status: 500 });
   }
-
+    prompt = prompt.replace(/,/g, "");
   //make a post to localhost:5000/upload_image with the image_url
     const upload_response = await fetch("http://127.0.0.1:5000/upload_image", {
     method: "POST",

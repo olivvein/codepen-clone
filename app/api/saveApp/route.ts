@@ -30,10 +30,8 @@ export async function POST(req: Request, res: Response) {
   // });
 
   try {
-    await run(
-      `INSERT INTO code (htmlCode, cssCode, visibleJsCode,appTitle) VALUES (?, ?, ?,?)`,
-      [htmlCode, cssCode, visibleJsCode, appTitle]
-    );
+    const payload=`INSERT INTO code (htmlCode, cssCode, visibleJsCode,appTitle) VALUES (${htmlCode}, ${cssCode}, ${visibleJsCode},${appTitle})`;
+    await run(payload);
     console.log(`A row has been inserted`);
   } catch (error) {
     console.log("Error!!!!2");
@@ -57,7 +55,7 @@ export async function GET(req: Request, res: Response) {
   const run = promisify(db.run).bind(db);
   const all = promisify(db.all).bind(db);
   try {
-    const rows: any[] = await all(`SELECT * FROM code`);
+    const rows: any[] = await all(`SELECT * FROM code`) as any;
     rows.forEach((row) => {
       theApps.push(row);
     });

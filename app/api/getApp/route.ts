@@ -15,7 +15,7 @@ export async function POST(req: Request, res: Response) {
   const run = promisify(db.run).bind(db);
   const all = promisify(db.all).bind(db);
   try {
-    const rows: any[] = await all(`SELECT * FROM code WHERE id = ?`,[id]);
+    const rows: any[] = await all('SELECT * FROM code WHERE id = '+id) as any;
     rows.forEach((row) => {
       theApps.push(row);
     });

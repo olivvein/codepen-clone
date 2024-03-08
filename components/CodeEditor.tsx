@@ -1,7 +1,7 @@
 import React from 'react';
-import MonacoEditor from 'react-monaco-editor';
+import MonacoEditor, { ChangeHandler } from 'react-monaco-editor';
 
-export default function CodeEditor(props) {
+export default function CodeEditor(props: { code: string | null | undefined; change: ChangeHandler | undefined; }) {
     const options = {
         selectOnLineNumbers: true,
         renderIndentGuides: true,
@@ -14,12 +14,12 @@ export default function CodeEditor(props) {
         snippetSuggestions: "inline"
     };
 
-    function editorDidMount(editor, monaco) {
+    function editorDidMount(editor: { focus: () => void; }, monaco: any) {
         console.log('editorDidMount', editor);
         editor.focus();
     }
 
-    function onChange(newValue, e) {
+    function onChange(newValue: any, e: any) {
         console.log('onChange', newValue, e);
     }
 
@@ -30,7 +30,6 @@ export default function CodeEditor(props) {
             language="js"
             theme="vs-dark"
             value={props.code}
-            options={options}
             onChange={props.change}
             editorDidMount={editorDidMount}
         />

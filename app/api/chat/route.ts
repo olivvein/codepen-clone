@@ -1,14 +1,18 @@
-import OpenAI from 'openai';
-import { OpenAIStream, StreamingTextResponse } from 'ai';
-import { ChatCompletionTool } from 'openai/resources/chat/completions';
+import OpenAI from "openai";
+import { OpenAIStream, StreamingTextResponse } from "ai";
+import { ChatCompletionTool } from "openai/resources/chat/completions";
 // Import the ChatCompletionTool type
- 
+
 // Create an OpenAI API client (that's edge friendly!)
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
+import Anthropic from "@anthropic-ai/sdk";
 
+const anthropic = new Anthropic({
+  apiKey: process.env.ANTHROPIC_API_KEY, // defaults to process.env["ANTHROPIC_API_KEY"]
+});
 
 const tools = [
   {
@@ -22,27 +26,27 @@ const tools = [
           prompt: {
             type: "string",
             description: "The prompt to generate the image from",
-          }
+          },
         },
         required: ["prompt"],
       },
     },
   },
 ];
- 
+
 // Set the runtime to edge for best performance
-export const runtime = 'edge';
+export const runtime = "edge";
 
 async function processOpenAIResponse(messages: any, tools: any) {
   const response = await openai.chat.completions.create({
-    model: 'gpt-4-turbo-preview',
+    model: "gpt-4-turbo-preview",
     stream: true,
     messages,
     tools: tools as ChatCompletionTool[], // Cast the tools array to ChatCompletionTool[]
-    tool_choice: "auto"
+    tool_choice: "auto",
   });
 
-  const toolToCall = { name: "", arguments: "" }
+  const toolToCall = { name: "", arguments: "" };
   let deltaResponse = "";
   const responseArray: string[] = [""];
 
@@ -53,16 +57,17 @@ async function processOpenAIResponse(messages: any, tools: any) {
         const delta = message.choices[0].delta;
         if (delta?.tool_calls) {
           console.log("Tool Call.");
-          isToolCall=true;
+          isToolCall = true;
           const toolCalls = delta.tool_calls[0];
           if (toolCalls.function) {
             if (toolCalls.function.name === "create_image") {
               //controller.enqueue(new TextEncoder().encode("create_image\n"));
               toolToCall.name = "create_image";
             }
-            toolToCall.arguments = toolToCall.arguments + toolCalls.function.arguments;
+            toolToCall.arguments =
+              toolToCall.arguments + toolCalls.function.arguments;
           }
-        } 
+        }
         if (delta.content) {
           //console.log(delta.content);
           controller.enqueue(new TextEncoder().encode(delta.content as string));
@@ -80,44 +85,59 @@ async function processOpenAIResponse(messages: any, tools: any) {
           body: JSON.stringify({ prompt: prompt }),
         });
         const respJson = await (await respFetch).json();
-        messages.push({ role: "user", content: "Here is the image you requested: " + respJson.image_url });
+        messages.push({
+          role: "user",
+          content: "Here is the image you requested: " + respJson.image_url,
+        });
 
-        controller.enqueue(new TextEncoder().encode("function_call:create_image\n" as string));
-        controller.enqueue(new TextEncoder().encode("prompt:"+prompt + "\n" as string));
-        controller.enqueue(new TextEncoder().encode("image_url:"+respJson.image_url + "\n" as string));
-
-        
+        controller.enqueue(
+          new TextEncoder().encode("function_call:create_image\n" as string)
+        );
+        controller.enqueue(
+          new TextEncoder().encode(("prompt:" + prompt + "\n") as string)
+        );
+        controller.enqueue(
+          new TextEncoder().encode(
+            ("image_url:" + respJson.image_url + "\n") as string
+          )
+        );
       }
       // if (isToolCall) {
       //   controller.enqueue(new TextEncoder().encode("End Tool Call.\n" as string));
       // }
-        controller.close();
-      
+      controller.close();
+
       //controller.close();
     },
   });
 
   return userStream;
 }
- 
+
 export async function POST(req: Request) {
   console.log("New Chat");
   const { messages } = await req.json();
-  console.log("New Chat")
-  console.log(messages)
+  console.log("New Chat");
+  console.log(messages);
 
   // Ask OpenAI for a streaming chat completion given the prompt
   const userStream = await processOpenAIResponse(messages, tools);
 
-  
+  //all but the first one
+  // const messageToAnthropic=messages.slice(1);
+  // const systemPrompt = messages[0].content;
 
-  
+  // const msg = await anthropic.messages.create({
+  //   model: "claude-3-opus-20240229",
+  //   max_tokens: 4000,
+  //   temperature: 0,
+  //   system: systemPrompt,
+  //   messages: messageToAnthropic
+  // });
+  // console.log(msg);
 
   // Convert the response into a friendly text-stream
-  
 
-  
-  
   // // Respond with the stream
   return new StreamingTextResponse(userStream);
 }

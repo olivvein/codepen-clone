@@ -1,14 +1,32 @@
 "use client";
 
 import { useChat, Message } from "ai/react";
-import { ChangeEvent, use, useState, useContext, useEffect ,FormEvent} from "react";
+import {
+  ChangeEvent,
+  use,
+  useState,
+  useContext,
+  useEffect,
+  FormEvent,
+} from "react";
 import Editor from "@/components/Editor";
 import { HtmlCodeContext } from "@/components/Context";
 
 export default function Chat() {
-  const { messages, input,setInput, handleInputChange, handleSubmit, setMessages } =
-    useChat();
+  const [api, setApi] = useState("/api/openAiWithTools");
 
+  const handleApiChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setApi(event.target.value);
+  };
+
+  const {
+    messages,
+    input,
+    setInput,
+    handleInputChange,
+    handleSubmit,
+    setMessages,
+  } = useChat({ api: api });
 
   const {
     fullMessages,
@@ -25,51 +43,57 @@ export default function Chat() {
     setCssCode,
   } = useContext(HtmlCodeContext);
 
-
-  const sendMessageGoogle = async (contentS:string) => {
+  const sendMessageGoogle = async (contentS: string) => {
     try {
-      const response = await fetch('http://localhost:3000/api/googleChat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify([...messages, { role: "user", content:contentS,id:3 }] ),
+      const response = await fetch("http://localhost:3000/api/googleChat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify([
+          ...messages,
+          { role: "user", content: contentS, id: 3 },
+        ]),
       });
 
       if (!response.ok) {
-        throw new Error('Network response was not ok');
+        throw new Error("Network response was not ok");
       }
 
       const updatedMessages = await response.json();
       setMessages(updatedMessages);
     } catch (error) {
-      console.error('Failed to send message: ', error);
+      console.error("Failed to send message: ", error);
     }
   };
 
-  const handleInputCode=()=>{
+  const handleInputCode = () => {
     console.log("handleInputCode");
     const formElement = document.getElementById("form");
 
-        // Créez un nouvel événement de soumission de formulaire
-        const submitEvent = new Event('submit', { bubbles: true, cancelable: true });
-        
-        // Associez l'événement de soumission à l'élément de formulaire
-        formElement?.dispatchEvent(submitEvent);
-        
-        // Créez un FormEvent à partir de l'événement de soumission
-        const formEvent: FormEvent<HTMLFormElement> = submitEvent as unknown as FormEvent<HTMLFormElement>;
-        // Appelez handleSubmit avec le FormEvent
-        //handleSubmitInput(formEvent);
-  }
+    // Créez un nouvel événement de soumission de formulaire
+    const submitEvent = new Event("submit", {
+      bubbles: true,
+      cancelable: true,
+    });
+
+    // Associez l'événement de soumission à l'élément de formulaire
+    formElement?.dispatchEvent(submitEvent);
+
+    // Créez un FormEvent à partir de l'événement de soumission
+    const formEvent: FormEvent<HTMLFormElement> =
+      submitEvent as unknown as FormEvent<HTMLFormElement>;
+    // Appelez handleSubmit avec le FormEvent
+    //handleSubmitInput(formEvent);
+  };
 
   const handleSubmitInput = (e: any) => {
     console.log("Will Submit");
     try {
       e.preventDefault();
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
     console.log("Will Submit 2");
-   
+
     // console.log(e.target.children[0].value);
     // console.log(e.target.value);
     // messages[0].content = systemPrompt;
@@ -78,64 +102,10 @@ export default function Chat() {
     try {
       handleSubmit(e);
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-    
-    
+
     setJsCode("");
-  };
-
-  const editor = Editor("");
-
-  const getConversationTitle = (messages: any[]) => {
-    const allMessages = [...messages];
-    console.log("allMessages");
-    console.log(messages);
-
-    console.log("oldMessages");
-    console.log(oldMessages);
-    allMessages.forEach((m) => {
-      try {
-        delete m.id;
-      } catch (error) {
-        console.log(error);
-      }
-      try {
-        delete m.createdAt;
-      } catch (error) {
-        console.log(error);
-      }
-    });
-    if (allMessages.length === 0) {
-      return "Chat";
-    }
-    allMessages[0].content =
-      "You give this app a title based on the conversation";
-    allMessages.push({
-      role: "user",
-      content: "Give this app a title. Just reply the title.",
-    });
-    fetch("/api/chat", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ messages: allMessages }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log(data);
-        setAppTitle(data);
-        //setTimeOfTitle(Date.now());
-        messages[0].content = systemPrompt;
-
-        //resetMessages()
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-      });
-
-    return allMessages[allMessages.length - 1].content;
   };
 
   const handle2 = (
@@ -158,12 +128,14 @@ export default function Chat() {
     return str.match(/html|css|js/)?.[0].replace("```", "") || "";
   };
 
+  const systemPromptNone = "";
+
   const systemPrompt = `You are a pro developer in javascript html and react and tailwind.
 You can create really complex app with these languages.
 You have no limitation in the number of lines of code.
 If requested a full app, you will do it.
 You allways respond to user in one run.
-You can at the begining of a response explain the functionallity that you are going to implement, only if needed to plan the app.
+You can at the begining of a response explain the functionallity that you are going to implement, only if needed to plan the app. Do it in // comments.
 You only create HTML and JS. 
 The HTML will be is inside <BODY> tag.
 You write in md format. you only write good code.
@@ -178,6 +150,21 @@ import ReactDOM from "https://esm.sh/react-dom";
 if you want to import a package, you can use a cdn like https://esm.sh/ 
 allways import tailwind like this :
 import { setup as twindSetup } from 'https://cdn.skypack.dev/twind/shim'
+
+for graph and charts use highstock and highchart
+import Highcharts from "https://esm.sh/highcharts";
+import HighchartsReact from "https://esm.sh/highcharts-react-official";
+or
+import Highcharts from "https://esm.sh/highcharts/highstock";
+
+
+for 3d, use THREE.js
+
+When the user ask for an app, imply every functionalities to make the best of it.
+
+Make full working apps, with every functionalities. 
+Add a header with the title of the app and a footer.
+Add a menu if needed.
 allways make the app take 100% of available space, with dark background. 
 Use card and beautiful tailwind style to present the result.
 Allways use try catch to handle errors.
@@ -188,8 +175,12 @@ https://api.coingecko.com/api
 https://api.multiversx.com/economics?extract=price for EGLD  => "price"
 https://www.francetvinfo.fr/titres.rss =>   entries "title" and "summary" and "links[0] as href " and "links[1] as image " For the News with feedparser library
 
-allways start by :
-appTitle: The title of the app
+when you create an image, Always make the prompt a full detailled prompt, with details about the content of the image and the style of the image.
+
+allways start by a comment with the title of the app:
+//appTitle: The title of the app
+
+If you want to 
 `;
 
   useEffect(() => {
@@ -267,19 +258,13 @@ appTitle: The title of the app
         }
       }
 
-      if(newMessage.content.indexOf("image_url:")!=-1){
-        let newwMessage ="";
-        for (const mess of fullMessages){
-          newwMessage+=mess.content+"\nNow make the app\n";
-        
+      if (newMessage.content.indexOf("image_url:") != -1) {
+        let newwMessage = "";
+        for (const mess of fullMessages) {
+          newwMessage += mess.content + "\nNow make the app\n";
         }
-        
+
         //setInput(newwMessage);
-
-      
-       
-        
-
       }
 
       const snippets = extractMultipleCodeSnippetInMarkdown(newMessage.content);
@@ -305,7 +290,6 @@ appTitle: The title of the app
           setJsCode(snippets[i]);
           setVisibleJsCode(snippets[i]);
           //if time of title is less than 5 minutes, I want to change the title
-          
         }
       }
 
@@ -315,10 +299,12 @@ appTitle: The title of the app
         if (
           liveSnippetString &&
           (liveSnippetString.indexOf("```js") !== -1 ||
-            liveSnippetString.indexOf("```javascript") !== -1)
+            liveSnippetString.indexOf("```javascript") !== -1 ||
+            liveSnippetString.indexOf("```jsx") !== -1)
         ) {
           liveSnippetString = liveSnippetString.replace("javascript", "js");
           liveSnippetString = liveSnippetString.replace("```js", "");
+          liveSnippetString = liveSnippetString.replace("```jsx", "");
           liveSnippetString = liveSnippetString.replace("```javascript", "");
           liveSnippetString = liveSnippetString.replace("```", "");
           //remove the first blank lines
@@ -329,30 +315,39 @@ appTitle: The title of the app
     }
   }, [messages]);
   return (
-    <div className="absolute right-0 top-0 flex flex-col w-full  max-w-md py-2 mx-auto stretch items-center justify-center">
-      <form onSubmit={handleSubmitInput} id="form">
-        <input
-          className="absolute  left-0 top-0  w-full max-w-md p-2 mb-8 border border-gray-300 rounded shadow-xl z-50"
+    <div className="absolute top-0 right-0 flex flex-row justify-end w-full py-4 px-2 mx-auto stretch z-50 h-16">
+      <form onSubmit={handleSubmitInput} id="form" className="w-1/2">
+        <textarea
+          rows={input.split("\n").length + 1}
+          className="w-full p-0 max-h-screen mb-8 border border-gray-300 rounded shadow-xl z-50"
           value={input}
           placeholder="What do you want?"
           onChange={handleInputChange}
+          onKeyPress={(event) => {
+            if (event.key === "Enter" && !event.shiftKey) {
+              event.preventDefault();
+              // Soumettre le formulaire
+              handleSubmitInput(event);
+            }
+          }}
         />
       </form>
       <button
         onClick={resetMessages}
-        className="absolute  right-0 top-0  w-50 max-w-md p-2 mb-8 border border-gray-300 rounded shadow-xl z-50"
+        className="p-2 h-12 w-30 mb-8 border border-gray-300 rounded shadow-xl z-50"
       >
         reset
       </button>
-
-      <button
-        onClick={handleInputCode}
-        className="absolute  right-0 top-0  w-50 max-w-md p-2 mb-8 border border-gray-300 rounded shadow-xl z-50"
+      <select
+        value={api}
+        onChange={handleApiChange}
+        className="p-2 h-12 w-30 mb-8 border border-gray-300 rounded shadow-xl z-50"
       >
-        handleInputCode
-      </button>
-
-
+        <option value="/api/openAiWithTools">OpenAI</option>
+        <option value="/api/anthropic">Anthropic</option>
+        <option value="/api/chatGroq">Groq</option>
+        <option value="/api/googleChat">Google</option>
+      </select>
     </div>
   );
 }

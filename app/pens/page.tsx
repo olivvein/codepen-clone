@@ -10,10 +10,11 @@ import Link from "next/link";
 import { HoverEffect } from "@/components/ui/Card-Hover-Effect";
 
 export default function Pen() {
-  const [apps, setApps] = useState([]);
+  const [apps, setApps] = useState([{ id: "", appTitle: "", cssCode: "", htmlCode: "", visibleJsCode: ""}]);
 
+  
   const [appsHover, setAppsHover] = useState([
-    { title: "", description: "", link: "" },
+    { title: "", description: <></>, link: "" },
   ]);
 
   function transpileJSX(jsxCode: string) {
@@ -71,6 +72,8 @@ export default function Pen() {
     cssCode: any;
     htmlCode: any;
     visibleJsCode: string;
+    appTitle: string;
+    id: string;
   }) => {
     return (
       <>
